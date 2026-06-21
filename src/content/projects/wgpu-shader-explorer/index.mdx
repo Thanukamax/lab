@@ -1,0 +1,23 @@
+---
+title: wgpu-shader-explorer
+summary: A local playground for writing and live-previewing WGSL compute and fragment shaders.
+topic: Graphics
+stack: [Rust, Tauri v2, wgpu, naga, TypeScript]
+status: Active · Phase 0
+role: Solo
+year: '2026'
+featured: false
+order: 11
+links:
+  repo: https://github.com/Thanukamax/wgpu-shader-explorer
+---
+
+**wgpu-shader-explorer** is a desktop playground for WGSL — the WebGPU shading language — where you write compute and fragment shaders and see them run, locally, against the real graphics stack.
+
+## Native, not browser
+
+Unlike browser-based shader toys, this runs on **native wgpu** with **naga** doing the WGSL parsing and validation. That means it talks to the same backend (Vulkan / Metal / DX12) a real engine would, and validation errors are the actual compiler's errors — not a JavaScript approximation. The shell is **Tauri v2**: a thin Rust core exposing a `validate_wgsl` command to a TypeScript frontend.
+
+## Where it sits
+
+It's part of the same thread as [vulkan-renderer](/lab/projects/vulkan-renderer) — learning modern GPU programming from the metal up — but aimed at the *authoring* side: fast iteration on shader code with immediate, honest feedback. Early phase, scaffold shipped, with the validation pipeline wired end to end.
