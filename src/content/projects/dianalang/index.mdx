@@ -1,0 +1,23 @@
+---
+title: dianalang
+summary: A tiny declarative language for voice-assistant skills where safety is a language feature, not a code review.
+topic: Developer Tools
+stack: [Python]
+status: Active · Experimental
+role: Solo
+year: '2026'
+featured: false
+order: 12
+links:
+  repo: https://github.com/Thanukamax/dianalang
+---
+
+**dianalang** is a small domain-specific language for writing voice-assistant skills — the kind [Diana](/lab/projects/diana) runs — where the dangerous parts are caught by the *compiler*, not by hoping the author got it right.
+
+## Safety as a language feature
+
+The premise: a skill that shells out, touches files, or runs privileged actions is a security surface. In a normal scripting setup you defend that with discipline and review. dianalang instead makes it a property of the language — a skill **compiles only if it's injection-proof and its dangerous capabilities are explicitly gated**. If you can't prove it's safe, it doesn't build.
+
+## Why I built it
+
+It came out of a real problem: as Diana's skill catalogue grew past 60 entries, each new skill was another chance to introduce a command-injection or an un-gated privileged action. Pushing that check down into a compile step turns "remember to be careful" into "the build fails." It's experimental and small on purpose — the interesting part is the idea, not the line count.
