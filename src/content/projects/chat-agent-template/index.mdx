@@ -1,0 +1,23 @@
+---
+title: chat-agent-template
+summary: A reusable scaffold for tool-using chat agents — Groq backend, streaming SSE API, React UI.
+topic: Developer Tools
+stack: [Python, FastAPI, TypeScript, React, Vite, Groq]
+status: Scaffold
+role: Solo
+year: '2026'
+featured: false
+order: 13
+links:
+  repo: https://github.com/Thanukamax/chat-agent-template
+---
+
+**chat-agent-template** is a seed I keep for starting tool-using chat-agent projects without rebuilding the same plumbing each time: a **Groq** LLM backend, a **FastAPI** server streaming tokens over **SSE**, and a **Vite + React 19** frontend that renders the stream as it arrives.
+
+## What it's actually for
+
+It's deliberately a *scaffold*, not a finished product. The value is the parts that are annoying to get right and worth reusing — the **tool registry**, the **event shape** for streaming tool-calls and responses to the UI, and the wiring between an async backend and a live frontend. Start a new agent project from this and you skip straight to the interesting part: defining tools and behaviour.
+
+## Honest status
+
+It's incomplete and labelled as such — I extracted and preserved the structure worth keeping from a larger build rather than polishing it into a product. Future agent experiments grow from here.
