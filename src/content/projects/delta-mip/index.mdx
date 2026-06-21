@@ -1,0 +1,23 @@
+---
+title: delta-mip
+summary: A byte-exact residual image codec — one bitstream that covers lossless restore and lossy distribution.
+topic: Research
+stack: [Rust]
+status: Research · v0.x
+role: Solo
+year: '2026'
+featured: false
+order: 9
+links:
+  repo: https://github.com/Thanukamax/delta-mip
+---
+
+**delta-mip** is the codec that fell out of [shrinkray](/lab/projects/shrinkray)'s reversibility research, spun into its own focused project. It encodes the *residual* between a downscaled texture and its original so a single bitstream can serve two masters: **byte-exact lossless restore** when you want the original back, and **lossy distribution** when you only need it to look right.
+
+## Honest numbers
+
+The headline result is deliberately unglamorous: **+14.7% net** over a raw backup on BC7 textures, byte-exact. That's a real, measured win — not a hype figure — and it comes from validation across a corpus, not a cherry-picked sample. An earlier version looked far better at small *n* and collapsed when the sample grew; delta-mip is what survived that honesty.
+
+## Why it exists
+
+Generic compressors don't know they're looking at block-compressed GPU textures. delta-mip is content-aware about exactly that structure, which is where the margin over a plain `zstd` backup comes from. It's source-available (no redistribution) Rust, and the long arc is a graphics-paper-grade story about class-routed reversible compression for game assets.
