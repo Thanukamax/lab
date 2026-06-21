@@ -1,0 +1,25 @@
+---
+title: SAM
+summary: A CPU-only, frontend-less battery agent — the lightweight sibling in the EVA family of local assistants.
+topic: AI
+stack: [Python, Ollama, ONNX, systemd]
+status: Active
+role: Solo
+year: '2026'
+featured: false
+order: 10
+links:
+  repo: https://github.com/Thanukamax/sam
+---
+
+**SAM** — "Small Agent, Mobile" — is the part of [Diana / Project EVA](/lab/projects/diana) built for when the laptop drops to low-power mode and running a full GPU assistant would be wrong. It's the same local-first DNA, stripped to its essentials.
+
+## Designed for the battery envelope
+
+- **CPU-only inference** — no GPU models, so it survives integrated-graphics mode. The reasoner runs on Ollama forced to CPU (`num_gpu: 0`), verified to leave the dGPU parked.
+- **No frontend** — no orb, no visual layer. Headless, voice-or-hotkey only. Less to render, less to power.
+- A bounded **tool-loop** with pluggable STT/LLM/TTS backends; the stub backends have zero dependencies, so it runs and tests with no models or network at all.
+
+## How it fits
+
+A small router watches the GPU power state and hands off between the heavy agent and SAM automatically — full Diana when the dGPU is up, SAM when you're on battery. It reuses Diana's CPU speech pipeline (Parakeet INT8) rather than reinventing it, so the lightweight member inherits the fast-transcription lineage for free.
