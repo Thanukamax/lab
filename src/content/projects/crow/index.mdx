@@ -1,0 +1,27 @@
+---
+title: CROW
+summary: A unified customer-interaction intelligence platform — and the real-time CCTV inference pipeline I built for it.
+topic: Cloud
+stack: [TypeScript, Bun, Hono, Cloudflare Workers, Durable Objects, Gemini]
+status: In development
+role: Team · 6
+year: '2026'
+featured: false
+order: 5
+links:
+  repo: https://github.com/CROW-B3
+---
+
+**CROW** (Cognitive Reasoning Observation Watcher) is a university group project — a platform that collects customer interactions across web, CCTV, and social channels and uses multi-agent AI to answer *why* a business sees the numbers it sees, not just *what* the numbers are. It's a Cloudflare-first, 20+ microservice system with 3000+ commits, built by a team of six for two real clients.
+
+## My piece: the CCTV pipeline
+
+I owned the path from camera to inference:
+
+- A **Bun CLI** that streams live RTSP feeds (or local video) to an ingest service over **WebSockets**.
+- **cctv-ingest-service** on **Cloudflare Workers + Durable Objects**, forwarding frames to **Google Gemini 2.0 Flash** for real-time multimodal inference and persisting structured results into the platform's data pipeline.
+- To design the v2 edge gateway, I **reverse-engineered Frigate NVR** — its go2rtc layer, ONVIF handling, and event state machine.
+
+## The wider platform
+
+Beyond my service, I contributed across the TypeScript/Bun/Hono codebase: a multi-agent reasoning pipeline, RAG over Cloudflare Vectorize, and an "Ask CROW" conversational layer. It's where I learned what a real microservice architecture, shared tooling, and a six-person git history actually feel like.

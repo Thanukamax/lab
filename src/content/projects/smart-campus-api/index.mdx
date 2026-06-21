@@ -1,0 +1,27 @@
+---
+title: Smart Campus API
+summary: A clean RESTful service for managing campus rooms, sensors, and readings — built in idiomatic Java.
+topic: Backend
+stack: [Java 17, JAX-RS, Jersey, Grizzly, Maven]
+status: Complete
+role: Solo
+year: '2025'
+featured: false
+order: 8
+links:
+  repo: https://github.com/Thanukamax/smart-campus-api
+---
+
+**Smart Campus API** is a RESTful service for managing campus rooms, sensors, and their readings. It's the project where I focused on doing backend fundamentals *properly* in the Java ecosystem rather than reaching for the framework I already knew.
+
+## What it does
+
+- CRUD over rooms, sensors, and readings with sensible resource modelling.
+- **Input validation** and **type filtering** on queries.
+- Built on **JAX-RS (Jersey)** running on a **Grizzly** HTTP container, packaged with **Maven**.
+
+## Why it matters to me
+
+Most of my work lives in the TypeScript / Rust / Python world. This one is deliberately Java-first — JAX-RS resources, a real servlet-adjacent runtime, and enforced code quality via **Spotless + Checkstyle** so the formatting and conventions stay consistent without me policing them by hand.
+
+It's a small project, but it's my cleanest demonstration of REST API design in the Java stack that enterprise platforms (the kind I want to work on) are actually built on.

@@ -1,0 +1,32 @@
+---
+title: donghua-cli
+summary: A fast, packaged terminal streaming client — search, stream, and download animation from your shell.
+topic: Developer Tools
+stack: [Python, Textual, httpx, selectolax, MPV]
+status: Shipped · v3.2
+role: Solo
+year: '2026'
+featured: true
+order: 3
+links:
+  repo: https://github.com/Thanukamax/donghua-cli
+  pypi: https://pypi.org/project/donghua-cli/
+---
+
+**donghua-cli** is a proper, published Python TUI — not a script. You can `pip install donghua-cli` (or grab it from Homebrew / AUR), type a query, and be watching in under 15 seconds, all from the terminal.
+
+## What makes it feel fast
+
+The product target was always *time-to-playback*. Getting under 15 seconds meant:
+
+- **Multi-source aggregation** with per-source timeout budgets so one slow site can't stall the search.
+- **LRU caching** and **episode preloading** — the next episode is resolved before you ask for it.
+- Handing **mpv** canonical stream URLs directly, skipping its slower extraction path.
+
+## Built to ship
+
+- A **Textual** TUI rebuilt around a strict palette and glyph budget in a polish pass.
+- 53 tests, `ruff` + `pyright` clean, GitHub Actions CI publishing to PyPI on tag.
+- Runs on Linux, macOS, Windows, and Android (Termux).
+
+It's the project where I learned to treat **UX latency as a feature** and packaging as part of the work, not an afterthought.

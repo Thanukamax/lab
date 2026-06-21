@@ -1,0 +1,29 @@
+---
+title: shrinkray
+summary: A desktop tool that shrinks Unreal Engine game installs by stripping redundant texture mip levels — reversibly.
+topic: Systems
+stack: [Rust, 'C#', Tauri v2, React, TypeScript, ONNX Runtime, CUE4Parse]
+status: Active · v0.7.x
+role: Solo
+year: '2026'
+featured: true
+order: 1
+links:
+  repo: https://github.com/Thanukamax/shrinkray
+---
+
+Modern games ship enormous texture data — often more resolution than your screen will ever use. **shrinkray** is a cross-platform desktop app (~10 MB native binary) that reclaims that disk space by stripping redundant top mip levels from cooked Unreal Engine textures, and — the hard part — putting them back **byte-for-byte** when you want them.
+
+## What it took
+
+The interesting work was reverse-engineering UE4's **cooked-texture binary layout**: the mip table, the inline payload format for small mips, and the external `.ubulk` bulk-data file. Stripping a mip means rewriting that structure so the engine still mounts the asset cleanly at a lower resolution — and recording exactly enough metadata to reconstruct the original later.
+
+## Architecture
+
+- **Tauri v2** shell: a Rust core for the file/pak operations and a React UI.
+- A **C# sidecar** built over [CUE4Parse](https://github.com/FabianFG/CUE4Parse) handles asset round-tripping — reading and re-serializing UE packages that a from-scratch Rust parser would get subtly wrong.
+- A 197-test workspace guards the binary-format edge cases (the cook layout has a lot of them).
+
+## Where it's going
+
+I'm investigating **class-routed reversible compression**: routing each texture by its `CompressionSettings` between byte-exact backup (normals, data maps) and lossy AI re-expansion (diffuse, UI). The honest finding so far — naive AI upscalers don't beat a plain backup on most PBR maps, which reframed the whole approach around *measured* gains rather than hype.

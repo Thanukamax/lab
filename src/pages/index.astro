@@ -1,0 +1,79 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { getThumb } from '../utils/thumbs';
+import { withBase, fmtDate } from '../utils/url';
+
+const projects = (await getCollection('projects', (p) => !p.data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const featured = projects.filter((p) => p.data.featured).slice(0, 3);
+
+const posts = (await getCollection('writing', (p) => !p.data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+const latestPosts = posts.slice(0, 3);
+---
+
+<BaseLayout>
+  <Nav />
+  <main class="wrap">
+    <header class="hero">
+      <div class="eyebrow">Thanuka Perera · the lab</div>
+      <h1>I build backends, systems tools, and AI that <em>runs on your own machine.</em></h1>
+      <p class="hero-sub">
+        Computer Science undergraduate and open-source builder from Colombo. This is where the
+        work lives — projects, build logs, and notes on the low-level details most people skip.
+      </p>
+      <div class="hero-meta">
+        <span><b>{projects.length}</b> projects</span>
+        <span><b>{posts.length}</b> notes</span>
+        <a href="https://github.com/Thanukamax">github.com/Thanukamax</a>
+        <a href="https://thanukamax.github.io">portfolio ↗</a>
+      </div>
+    </header>
+
+    <!-- featured projects -->
+    <div class="section-head">
+      <h2>Selected work</h2>
+      <a href={withBase('projects')}>All projects →</a>
+    </div>
+    <section class="proj-grid">
+      {featured.map((p) => (
+        <a class="proj-card reveal" href={withBase(`projects/${p.slug}`)}>
+          <div class="proj-art">
+            {p.data.heroImage ? <img src={p.data.heroImage} alt="" /> : <Fragment set:html={getThumb(p.data.topic)} />}
+            <span class="badge">{p.data.status}</span>
+          </div>
+          <div class="proj-body">
+            <span class="proj-topic">{p.data.topic} · {p.data.role}</span>
+            <h3 class="proj-title">{p.data.title}</h3>
+            <p class="proj-summary">{p.data.summary}</p>
+            <div class="proj-stack">{p.data.stack.slice(0, 4).map((s) => <span class="chip">{s}</span>)}</div>
+          </div>
+        </a>
+      ))}
+    </section>
+
+    <!-- latest writing -->
+    <div class="section-head">
+      <h2>Latest writing</h2>
+      <a href={withBase('writing')}>All notes →</a>
+    </div>
+    <section class="post-list">
+      {latestPosts.map((post) => (
+        <a class="post-row reveal" href={withBase(`writing/${post.slug}`)}>
+          <div>
+            <span class="post-topic">{post.data.topic}</span>
+            <h3 class="post-h">{post.data.title}</h3>
+            <p class="post-desc">{post.data.description}</p>
+          </div>
+          <div class="post-date">{fmtDate(post.data.date)}<span class="read">{post.data.readTime} read</span></div>
+        </a>
+      ))}
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

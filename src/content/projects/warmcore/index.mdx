@@ -1,0 +1,27 @@
+---
+title: warmcore
+summary: Systems research salvaging a debunked x86→ARM64 binary-translation pitch into something testable.
+topic: Research
+stack: [Rust]
+status: Research · Phase 0–1
+role: Solo
+year: '2026'
+featured: false
+order: 6
+links:
+  repo: https://github.com/Thanukamax/warmcore
+---
+
+**warmcore** started as a refusal to either accept or dismiss a hype pitch on faith. Someone described a "neural binary translator" with a 256 KB opcode brain *pinned in L2/L3 cache* making translation nearly free. I evaluated it as dead on two facts — you can't lock a buffer into L2/L3 from userspace, and inference is compute-bound, not reach-bound. Cache residency fixes latency, not the ALU wall.
+
+## What survived
+
+Three salvageable mechanisms fell out, built as three public Rust repos:
+
+- **residency-bench** — a dependency-free microbenchmark for pointer-chase latency, MAC throughput, and how many inferences a resident model could actually do.
+- **jit-oracle** — the real bet: an offline-trained model distilled into a static lookup sidecar, so the runtime does **zero hot-path inference**. Model-driven PGO for a dynamic binary translator.
+- **warmcore** — the spec, scored feasibility, ethics, and a `minidbt` teaching demo (block-chaining JIT, 3.9× over a re-decode interpreter).
+
+## The discipline
+
+The whole thing is built around a **Phase-1 headroom gate**: before training any model, a forked Box64 must *prove* there's measurable headroom in eager-translate decisions. If first-encounter stalls are already negligible, the idea is dead — publish the negative result and stop. It's research designed to be falsifiable, which is the part I care about most.

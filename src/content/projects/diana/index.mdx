@@ -1,0 +1,31 @@
+---
+title: Diana / Project EVA
+summary: A privacy-first voice assistant for KDE that runs entirely on-device — an agentic tool-loop over a local LLM.
+topic: AI
+stack: [Python, Ollama, ONNX, systemd, Qt]
+status: Live
+role: Solo
+year: '2026'
+featured: true
+order: 2
+links:
+  repo: https://github.com/Thanukamax/diana
+---
+
+**Diana** is a desktop voice assistant that does its thinking locally — no cloud, no API keys, no telemetry. It listens, reasons, and acts on a Linux/KDE machine with a 4 GB GPU, which is the constraint that shaped every design decision.
+
+## A society of small models
+
+Rather than one big model, Diana runs a **multi-model society**: a tiny router classifies intent, an embedding model retrieves the right tools from a 60+ skill catalogue, and a chat model handles conversation. They're kept resident so the path from speech to action stays warm.
+
+## Performance was the real project
+
+The win wasn't getting it to work — it was getting it *fast* on weak hardware:
+
+- **Speech-to-text at 245 ms average on CPU** (Parakeet-TDT INT8 via ONNX), which freed the GPU entirely and killed an out-of-memory crash vector.
+- A **kNN "learned router"** that caches repeated commands — a phrase you've said before resolves in ~20 ms instead of a full LLM pass.
+- Prompt-cache discipline: keeping the system prompt static and injecting per-query context into the user message turned a ~10 s route into ~3.4 s.
+
+## Project EVA
+
+Diana is the flagship of **EVA**, a family of situation-specific local agents — including a CPU-only battery-mode sibling and a wake-word watcher — handed off by GPU power state. 280+ tests keep the whole thing honest.

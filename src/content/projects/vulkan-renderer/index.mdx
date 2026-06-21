@@ -1,0 +1,31 @@
+---
+title: vulkan-renderer
+summary: Learning modern GPU programming the hard way — a Vulkan 1.3 renderer built from scratch in C++23.
+topic: Graphics
+stack: ['C++23', Vulkan 1.3, CMake, Ninja, GLFW, GLM]
+status: Learning · Phase 1/7
+role: Solo
+year: '2026'
+featured: false
+order: 7
+links:
+  repo: https://github.com/Thanukamax/vulkan-renderer
+---
+
+There's no shortcut to understanding the modern graphics pipeline — you have to write the verbose, explicit thing yourself. **vulkan-renderer** is me doing exactly that: building up a Vulkan 1.3 renderer in C++23 from the first `VkInstance` to a textured scene, one phase at a time.
+
+## The roadmap
+
+1. ✅ GLFW window + `VkInstance` + physical-device enumeration
+2. ⏳ Logical device, queues, surface
+3. ⏳ Swapchain, image views
+4. ⏳ Render pass, graphics pipeline, framebuffers
+5. ⏳ Command buffers, first triangle
+6. ⏳ Vertex buffers, uniforms, spinning cube
+7. ⏳ Textures, depth buffer, textured scene
+
+## Stack
+
+Modern, no-friction C++ tooling: **C++23**, **CMake + Ninja**, Vulkan 1.3 via the system SDK, and GLFW / GLM / VMA pulled in with `FetchContent` so there's nothing to install globally. Validation layers auto-enable in debug builds. CI builds it on Ubuntu.
+
+It pairs with the GPU-architecture curiosity that runs through a lot of my work — shrinkray, the texture research, the local-AI hardware constraints. This is the layer underneath all of it.

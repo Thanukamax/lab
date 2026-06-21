@@ -1,0 +1,84 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import { withBase, fmtDate } from '../../utils/url';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('writing', (p) => !p.data.draft);
+  return posts.map((p) => ({ params: { slug: p.slug }, props: { post: p } }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await post.render();
+const d = post.data;
+
+const others = (await getCollection('writing', (p) => !p.data.draft))
+  .filter((p) => p.slug !== post.slug)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const toc = headings.filter((h) => h.depth === 2);
+---
+
+<BaseLayout title={`${d.title} — Thanuka Perera`} description={d.description}>
+  <div class="progress" id="progress"></div>
+  <Nav />
+  <main class="wrap">
+    <nav class="breadcrumb">
+      <a href={withBase('writing')}>Writing</a><span class="sep">/</span><span>{d.topic}</span>
+    </nav>
+
+    <header class="detail-head">
+      <span class="detail-topic">{d.topic}</span>
+      <h1 class="detail-title">{d.title}</h1>
+      <p class="detail-summary">{d.description}</p>
+      <div class="detail-meta">
+        <span><b>Thanuka Perera</b></span>
+        <span>{fmtDate(d.date, true)}</span>
+        <span>{d.readTime} read</span>
+      </div>
+    </header>
+
+    {toc.length > 1 && (
+      <nav class="toc">
+        <span class="toc-title">In this note</span>
+        {toc.map((h) => <a href={`#${h.slug}`}>{h.text}</a>)}
+      </nav>
+    )}
+
+    <article class="prose"><Content /></article>
+
+    <section class="subscribe reveal">
+      <div>
+        <h4>New notes, delivered quietly.</h4>
+        <p>No email, no tracking — just a feed.</p>
+      </div>
+      <a class="btn btn-accent" href={withBase('feed.xml')}>Subscribe via RSS</a>
+    </section>
+
+    {others.length > 0 && (
+      <section class="read-next">
+        <div class="section-head" style="margin-top:0"><h2>Read next</h2><a href={withBase('writing')}>All →</a></div>
+        <div class="rn-grid">
+          {others.map((p) => (
+            <a class="rn-card reveal" href={withBase(`writing/${p.slug}`)}>
+              <span class="proj-topic">{p.data.topic}</span>
+              <h5>{p.data.title}</h5>
+              <div class="rn-meta">{fmtDate(p.data.date)} · {p.data.readTime}</div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .toc { max-width: var(--readw); margin: 4px 0 28px; padding: 14px 18px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--bg-soft); }
+  .toc-title { display: block; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-2); margin-bottom: 8px; }
+  .toc a { display: inline-block; font-size: 0.88rem; color: var(--muted); margin-right: 16px; }
+  .toc a:hover { color: var(--accent); }
+</style>

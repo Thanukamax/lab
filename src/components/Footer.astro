@@ -1,0 +1,12 @@
+---
+import { withBase } from '../utils/url';
+const year = new Date().getFullYear();
+---
+<footer class="footer wrap">
+  <span>© {year} Thanuka Sehasna Perera</span>
+  <span>
+    <a href="https://github.com/Thanukamax">GitHub</a> ·
+    <a href="https://thanukamax.github.io">Portfolio</a> ·
+    <a href={withBase('feed.xml')}>RSS</a>
+  </span>
+</footer>

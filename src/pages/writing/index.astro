@@ -1,0 +1,36 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import { withBase, fmtDate } from '../../utils/url';
+
+const posts = (await getCollection('writing', (p) => !p.data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<BaseLayout title="Writing — Thanuka Perera" description="Build logs, field notes, and essays on systems, performance, and on-device AI.">
+  <Nav />
+  <main class="wrap">
+    <header class="hero" style="padding-bottom:8px">
+      <div class="eyebrow">Writing</div>
+      <h1>Field notes.</h1>
+      <p class="hero-sub">Build logs, opinions, and the occasional debugging war story — written from lived experience, not tutorials. <a href={withBase('feed.xml')} style="color:var(--accent)">Subscribe via RSS →</a></p>
+    </header>
+
+    <section class="post-list" style="margin-top:24px">
+      {posts.map((post) => (
+        <a class="post-row reveal" href={withBase(`writing/${post.slug}`)}>
+          <div>
+            <span class="post-topic">{post.data.topic}</span>
+            <h3 class="post-h">{post.data.title}</h3>
+            <p class="post-desc">{post.data.description}</p>
+          </div>
+          <div class="post-date">{fmtDate(post.data.date)}<span class="read">{post.data.readTime} read</span></div>
+        </a>
+      ))}
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

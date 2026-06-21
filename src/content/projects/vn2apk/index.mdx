@@ -1,0 +1,27 @@
+---
+title: vn2apk
+summary: A desktop app that turns PC visual-novel / RPG game folders into signed Android APKs.
+topic: Developer Tools
+stack: [Rust, Tauri v2, React, TypeScript, Cordova, Gradle]
+status: Shipped · v1.0
+role: Solo
+year: '2026'
+featured: false
+order: 4
+links:
+  repo: https://github.com/Thanukamax/vn2apk
+---
+
+**vn2apk** takes a PC game folder — Ren'Py, RPG Maker MV/MZ, or TyranoBuilder — and produces a **signed Android APK** you can install on a phone. v1.0 shipped and I've used it to package real translated games end to end.
+
+## The toolchain is the product
+
+The genuinely hard part isn't the conversion — it's the toolchain. A first-time user doesn't have JDK 21, Android SDK build-tools, Gradle, or Cordova installed. So vn2apk **auto-detects and installs** the whole stack from a Settings panel, manages keystore generation, and **streams the build log live** from the subprocesses so you can see what's happening.
+
+## Sharp edges I had to file down
+
+Shipping this meant fighting platform quirks that don't show up in tutorials — cordova-android 13's single-`--gradleArg` parsing, RPG Maker MV save bundling failing silently under the WebView asset loader, and translated-game save files being dropped because the stored title no longer matched. Each one was a real debugging session ending in a one-line fix in the right place.
+
+## Stack
+
+Tauri v2 (Rust backend for process spawning + fs, React/TypeScript frontend), ~10 MB binary, releases auto-published via GitHub Actions.

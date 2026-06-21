@@ -1,0 +1,76 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import { getThumb } from '../../utils/thumbs';
+import { withBase } from '../../utils/url';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects', (p) => !p.data.draft);
+  return projects.map((p) => ({ params: { slug: p.slug }, props: { project: p } }));
+}
+
+const { project } = Astro.props;
+const { Content } = await project.render();
+const d = project.data;
+
+const others = (await getCollection('projects', (p) => !p.data.draft))
+  .filter((p) => p.slug !== project.slug)
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+
+const linkLabels: Record<string, string> = { repo: 'Source', demo: 'Demo', pypi: 'PyPI', site: 'Live site' };
+const links = Object.entries(d.links).filter(([, v]) => v) as [string, string][];
+---
+
+<BaseLayout title={`${d.title} — Thanuka Perera`} description={d.summary}>
+  <div class="progress" id="progress"></div>
+  <Nav />
+  <main class="wrap">
+    <nav class="breadcrumb">
+      <a href={withBase('projects')}>Projects</a><span class="sep">/</span><span>{d.topic}</span>
+    </nav>
+
+    <header class="detail-head">
+      <span class="detail-topic">{d.topic}</span>
+      <h1 class="detail-title">{d.title}</h1>
+      <p class="detail-summary">{d.summary}</p>
+    </header>
+
+    <div class="specs">
+      <div class="spec"><span class="k">Status</span><span class="v">{d.status}</span></div>
+      <div class="spec"><span class="k">Role</span><span class="v">{d.role}</span></div>
+      <div class="spec"><span class="k">Year</span><span class="v">{d.year}</span></div>
+      <div class="spec"><span class="k">Stack</span><span class="v">{d.stack.join(' · ')}</span></div>
+    </div>
+
+    {links.length > 0 && (
+      <div class="detail-links">
+        {links.map(([k, v], i) => (
+          <a class={i === 0 ? 'btn btn-accent' : 'btn'} href={v}>{linkLabels[k] ?? k} ↗</a>
+        ))}
+      </div>
+    )}
+
+    <figure class="detail-art" style="margin-left:0;margin-right:0">
+      {d.heroImage ? <img src={d.heroImage} alt="" /> : <Fragment set:html={getThumb(d.topic)} />}
+    </figure>
+
+    <article class="prose"><Content /></article>
+
+    <section class="read-next">
+      <div class="section-head" style="margin-top:0"><h2>More projects</h2><a href={withBase('projects')}>All →</a></div>
+      <div class="rn-grid">
+        {others.map((p) => (
+          <a class="rn-card reveal" href={withBase(`projects/${p.slug}`)}>
+            <span class="proj-topic">{p.data.topic}</span>
+            <h5>{p.data.title}</h5>
+            <div class="rn-meta">{p.data.status} · {p.data.role}</div>
+          </a>
+        ))}
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

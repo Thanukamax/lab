@@ -1,0 +1,71 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import { getThumb } from '../../utils/thumbs';
+import { withBase } from '../../utils/url';
+
+const projects = (await getCollection('projects', (p) => !p.data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const topics = ['All', ...Array.from(new Set(projects.map((p) => p.data.topic)))];
+---
+
+<BaseLayout title="Projects — Thanuka Perera" description="Backend, systems tooling, on-device AI, and graphics projects by Thanuka Perera.">
+  <Nav />
+  <main class="wrap">
+    <header class="hero" style="padding-bottom:8px">
+      <div class="eyebrow">Projects</div>
+      <h1>Things I've built.</h1>
+      <p class="hero-sub">Shipped tools, systems experiments, and research — solo unless noted. Each one is its own write-up.</p>
+    </header>
+
+    <div class="filters" role="tablist" aria-label="Filter by topic">
+      {topics.map((t, i) => (
+        <button class="filter-btn" data-topic={t} aria-pressed={i === 0 ? 'true' : 'false'}>{t}</button>
+      ))}
+    </div>
+
+    <section class="proj-grid" style="margin-top:24px">
+      {projects.map((p) => (
+        <a class="proj-card reveal" href={withBase(`projects/${p.slug}`)} data-topic={p.data.topic}>
+          <div class="proj-art">
+            {p.data.heroImage ? <img src={p.data.heroImage} alt="" /> : <Fragment set:html={getThumb(p.data.topic)} />}
+            <span class="badge">{p.data.status}</span>
+          </div>
+          <div class="proj-body">
+            <span class="proj-topic">{p.data.topic} · {p.data.year} · {p.data.role}</span>
+            <h3 class="proj-title">{p.data.title}</h3>
+            <p class="proj-summary">{p.data.summary}</p>
+            <div class="proj-stack">{p.data.stack.slice(0, 5).map((s) => <span class="chip">{s}</span>)}</div>
+          </div>
+        </a>
+      ))}
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; }
+  .filter-btn { font-family: var(--mono); font-size: 0.78rem; padding: 7px 13px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.18s var(--ease); }
+  .filter-btn:hover { color: var(--ink); border-color: var(--accent); }
+  .filter-btn[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .proj-card.hidden { display: none; }
+</style>
+
+<script is:inline>
+  const btns = document.querySelectorAll('.filter-btn');
+  const cards = document.querySelectorAll('.proj-card');
+  btns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const topic = btn.getAttribute('data-topic');
+      btns.forEach((b) => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+      cards.forEach((c) => {
+        const show = topic === 'All' || c.getAttribute('data-topic') === topic;
+        c.classList.toggle('hidden', !show);
+      });
+    });
+  });
+</script>
