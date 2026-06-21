@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import { getThumb } from '../../utils/thumbs';
+import { getHero } from '../../utils/heroes';
 import { withBase } from '../../utils/url';
 
 export async function getStaticPaths() {
@@ -54,7 +55,7 @@ const links = Object.entries(d.links).filter(([, v]) => v) as [string, string][]
     )}
 
     <figure class="detail-art" style="margin-left:0;margin-right:0">
-      {d.heroImage ? <img src={d.heroImage} alt="" /> : <Fragment set:html={getThumb(d.topic)} />}
+      {d.heroImage ? <img src={d.heroImage} alt="" /> : <Fragment set:html={getHero(project.slug) ?? getThumb(d.topic)} />}
     </figure>
 
     <article class="prose"><Content /></article>

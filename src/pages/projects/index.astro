@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import { getThumb } from '../../utils/thumbs';
+import { getHero } from '../../utils/heroes';
 import { withBase } from '../../utils/url';
 
 const projects = (await getCollection('projects', (p) => !p.data.draft)).sort(
@@ -31,7 +32,7 @@ const topics = ['All', ...Array.from(new Set(projects.map((p) => p.data.topic)))
       {projects.map((p) => (
         <a class="proj-card reveal" href={withBase(`projects/${p.slug}`)} data-topic={p.data.topic}>
           <div class="proj-art">
-            {p.data.heroImage ? <img src={p.data.heroImage} alt="" /> : <Fragment set:html={getThumb(p.data.topic)} />}
+            {p.data.heroImage ? <img src={p.data.heroImage} alt="" /> : <Fragment set:html={getHero(p.slug) ?? getThumb(p.data.topic)} />}
             <span class="badge">{p.data.status}</span>
           </div>
           <div class="proj-body">
