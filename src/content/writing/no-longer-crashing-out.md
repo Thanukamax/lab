@@ -13,7 +13,7 @@ I didn't walk away though. The version of me that wrote that post would've bet m
 
 ## I measured everything and every single thing was dead
 
-![Gru's Plan meme: disabled GOS, updated Turnip + cut res, swept every Box64 flag, every result is flat](/lab/memes/p2-gru.jpg)
+![Surprised Pikachu meme captioned "every setting I swept did exactly nothing"](/lab/memes/pikachu.jpg)
 
 The next stretch was just... knobs. Every setting the stack has, A/B'd on real hardware with a frametime harness I built specifically so I couldn't lie to myself about the numbers.
 
@@ -31,7 +31,7 @@ You can't config your way out because it's not a config problem. A flagship 2024
 
 So I'm standing there staring at two doors and I hate both of them:
 
-![Two-buttons sweating-guy meme: "tweak settings forever" vs "fork 5M lines of Wine alone"](/lab/memes/p2-buttons.jpg)
+![Disaster Girl meme: "my two ways to fix it — tweak forever, or fork 5M lines of Wine"](/lab/memes/disaster.jpg)
 
 Door one: keep tweaking settings — which I just proved, *five times*, does jack. Door two: fork the entire stack and fix it myself. Wine, Box64, DXVK, Turnip. Millions of lines, built by expert teams over twenty years. Fork all that and I stop getting their updates and spend the rest of my life just running to stand still. Drowning, solo, in five million lines of somebody else's Wine.
 
@@ -39,7 +39,7 @@ That's the spot where most people quit. Both doors suck.
 
 ## The third door
 
-![Always-has-been astronaut meme: "wait, my genius idea is just Proton?" / "always has been"](/lab/memes/p2-always.png)
+![Left Exit 12 meme: swerving off "tweak settings forever" onto the "inject, don't fork" exit — me, finding Proton](/lab/memes/leftexit.jpg)
 
 Then it clicked — and it only clicked *because* I'd been forced to stop flailing: don't fork it. **Inject** into it.
 
@@ -51,7 +51,7 @@ Except there's no Proton for Android. Nobody built the thing that auto-updates t
 
 ## Why this isn't a crash-out — and isn't a victory lap either
 
-![Drake meme: rejecting "sprint through the door, build for 3 weeks", approving "make the unknowns prove themselves first"](/lab/memes/p2-drake.jpg)
+![Roll Safe (tapping temple) meme: "can't waste 3 weeks building the wrong thing if you make the unknowns prove it first"](/lab/memes/rollsafe.jpg)
 
 Old me sprints through that door screaming, builds for three weeks, finds out too late it's a broom closet. New me made a deal this week: hope never outruns evidence. So I didn't build — I made the unknowns prove themselves *first.* The big one: can you even load a custom Vulkan layer under this emulator, on a locked-down, non-rooted phone?
 
