@@ -25,7 +25,7 @@ const toc = headings.filter((h) => h.depth === 2);
 <BaseLayout title={`${d.title} — Thanuka Perera`} description={d.description}>
   <Nav />
   <main id="top" class="lq-content">
-    <article class="lq-section lq-read">
+    <article class="lq-section lq-doc-section">
       <nav class="lq-breadcrumb">
         <a href={withBase('writing')}>Writing</a><span class="sep">/</span><span>{d.topic}</span>
       </nav>
@@ -37,40 +37,46 @@ const toc = headings.filter((h) => h.depth === 2);
         <p class="lq-byline"><b>Thanuka Perera</b> · {fmtDate(d.date, true)} · {d.readTime} read</p>
       </div>
 
-      {toc.length > 1 && (
-        <div class="lq-glass lq-toc" style="margin-bottom:18px">
-          <p class="lq-toc-title">On this page</p>
-          <ol>{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
-        </div>
-      )}
-
-      <div class="lq-glass" style="padding:clamp(24px,4vw,40px)">
-        <div class="lq-prose lq-prose--lead"><Content /></div>
-      </div>
-
-      <div class="lq-glass lq-subscribe" style="margin-top:18px">
-        <div>
-          <h4>New notes when there's something worth writing.</h4>
-          <p>No email, no tracking, no newsletter funnel — just a feed.</p>
-        </div>
-        <a class="lq-gel lq-gel--accent" href={withBase('feed.xml')}>Subscribe via RSS</a>
-      </div>
-
-      {others.length > 0 && (
-        <section style="margin-top:42px">
-          <div class="lq-sechead"><h2><span class="lq-drop"></span>Read next</h2><a href={withBase('writing')}>All →</a></div>
-          <div class="lq-glass lq-posts" style="padding:4px 14px">
-            {others.map((p) => (
-              <a class="lq-postrow" href={withBase(`writing/${p.slug}`)}>
-                <span class="lq-postrow-topic">{p.data.topic}</span>
-                <h3 class="lq-postrow-h">{p.data.title}</h3>
-                <p class="lq-postrow-desc">{p.data.description}</p>
-                <span class="lq-postrow-meta">{fmtDate(p.data.date)}<span class="read">{p.data.readTime}</span></span>
-              </a>
-            ))}
+      <div class="lq-doc">
+        <div class="lq-doc-main">
+          <div class="lq-glass" style="padding:clamp(24px,4vw,40px)">
+            <div class="lq-prose lq-prose--lead"><Content /></div>
           </div>
-        </section>
-      )}
+
+          <div class="lq-glass lq-subscribe">
+            <div>
+              <h4>New notes when there's something worth writing.</h4>
+              <p>No email, no tracking, no newsletter funnel — just a feed.</p>
+            </div>
+            <a class="lq-gel lq-gel--accent" href={withBase('feed.xml')}>Subscribe via RSS</a>
+          </div>
+
+          {others.length > 0 && (
+            <section style="margin-top:24px">
+              <div class="lq-sechead"><h2><span class="lq-drop"></span>Read next</h2><a href={withBase('writing')}>All →</a></div>
+              <div class="lq-glass lq-posts" style="padding:4px 14px">
+                {others.map((p) => (
+                  <a class="lq-postrow" href={withBase(`writing/${p.slug}`)}>
+                    <span class="lq-postrow-topic">{p.data.topic}</span>
+                    <h3 class="lq-postrow-h">{p.data.title}</h3>
+                    <p class="lq-postrow-desc">{p.data.description}</p>
+                    <span class="lq-postrow-meta">{fmtDate(p.data.date)}<span class="read">{p.data.readTime}</span></span>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+
+        {toc.length > 1 && (
+          <aside class="lq-doc-aside">
+            <div class="lq-glass lq-toc">
+              <p class="lq-toc-title">On this page</p>
+              <ol>{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
+            </div>
+          </aside>
+        )}
+      </div>
     </article>
 
     <Footer />

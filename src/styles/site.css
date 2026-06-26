@@ -27,3 +27,29 @@ body { min-height: 100dvh; background: #04161a; overflow-x: hidden; }
 .lq-detaillinks { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
 .lq-detail-art { position: relative; aspect-ratio: 21 / 9; overflow: hidden; border-radius: var(--r-card); border: 1px solid var(--glass-bd); box-shadow: var(--surface-sh); margin: 22px 0; }
 .lq-detail-art > svg, .lq-detail-art > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ---- fill the page: stretch content into wide viewports, no dead side space ---- */
+.lq-section { max-width: min(1840px, 100%); padding-left: clamp(20px, 4vw, 72px); padding-right: clamp(20px, 4vw, 72px); }
+.lq-wide { max-width: 100%; }
+/* masthead spans the page but its text keeps a readable measure (left-aligned) */
+.lq-intro { max-width: 100%; }
+.lq-intro h1 { max-width: 20ch; }
+.lq-intro-bio { max-width: 64ch; }
+/* about keeps a measured single column */
+.lq-read { max-width: 860px; }
+.lq-read .lq-prose { max-width: none; }
+
+/* ---- document layout: reading pages fill the width via prose + sticky rail ---- */
+.lq-doc-section { max-width: min(1680px, 100%); }
+.lq-doc { display: grid; gap: clamp(22px, 2.6vw, 44px); align-items: start; }
+.lq-doc-main { min-width: 0; }
+.lq-doc-main > * + * { margin-top: 18px; }
+.lq-doc-aside { display: flex; flex-direction: column; gap: 16px; }
+.lq-doc-aside .lq-toc { margin: 0; }
+.lq-doc-aside .lq-specs { flex-direction: column; gap: 14px; }
+.lq-doc-aside .lq-detaillinks { margin-top: 0; }
+.lq-doc-aside .lq-aside-title { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 2px 0 -4px; }
+@media (min-width: 1000px) {
+  .lq-doc { grid-template-columns: minmax(0, 1fr) 300px; }
+  .lq-doc-aside { position: sticky; top: 92px; }
+}

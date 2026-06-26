@@ -72,7 +72,7 @@ const arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
     <section class="lq-section lq-wide">
       <div class="lq-sechead"><h2><span class="lq-drop"></span>Selected work</h2><a href={withBase('projects')}>All {projects.length} →</a></div>
-      <div class="lq-grid" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr))">
+      <div class="lq-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
         {featured.map((p) => { const v = verdict(p.data.status); return (
           <a class="lq-glass lq-glass--interactive lq-card" href={withBase(`projects/${p.slug}`)}>
             <div class="lq-card-art">
