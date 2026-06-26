@@ -1,5 +1,5 @@
 ---
-title: The GPU wasn't even trying
+title: "I am Crashing out (a WinEmulation Story)"
 description: A day of trying to make Android run PC games faster, watching every idea I had die on contact with reality, and the one number that made it all worth it. Sort of.
 topic: Performance
 date: 2026-06-26
