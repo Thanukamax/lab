@@ -11,7 +11,11 @@ This is a crash-out. I'm writing it while I'm still annoyed, on purpose, because
 
 "Negative results are deliverables." Yeah. Let me try to mean it.
 
+![Two-buttons sweating-guy meme, the buttons labelled "admit the idea is dead" and "pivot and cope"](/lab/memes/two-buttons.jpg)
+
 ## The idea was beautiful and the idea was stupid
+
+![Expanding-brain meme escalating from "run x86 games on a phone" to "pin a neural net in L2 so it's free"](/lab/memes/expanding-brain.jpg)
 
 You can run x86 Windows games on a phone. Winlator stacks Box64 (x86→ARM translation) on Wine on DXVK and somehow it works. It's also slow, because turning one instruction set into another in real time costs something.
 
@@ -28,6 +32,8 @@ Dead. On hardware. Twice. Fine. *Fine.*
 
 ## The phone that refused to sweat
 
+![This-is-fine dog sitting calmly in a burning room — the GPU idling while the frame budget burns](/lab/memes/this-is-fine.jpg)
+
 The salvage: don't run the model live, **bake it offline into a static table** and use it to translate the right code blocks early so first-run stutter dies. Plus a GPU-side version for shaders and textures.
 
 But I have a rule, beaten into me by every time I shipped a "win" that turned out to be measurement noise: **don't build the optimizer until you've proven there's something to optimize.** So first I built a capture harness — adb, no root, reading frametimes and GPU load and per-core clocks and temps off a live game on my S24U. Loaded NieR:Automata. Ran the one test that settles it: hold the scene still, cut the render resolution by 3×, watch if frames get faster.
@@ -42,6 +48,8 @@ Nobody was driving the car. That's the whole problem and I didn't have a name fo
 
 ## Every room I walked into was already full
 
+![Always-has-been astronaut meme: "wait, Box64 already caches this?" / "always has been"](/lab/memes/always-has-been.png)
+
 Okay. It's CPU-bound. That's literally where my CPU idea lives. Go attack translation.
 
 - **Cross-run translation cache** — the exact thing my offline table was supposed to win? Box64 already ships it. On by default. Shipped last year. My prize was claimed before I'd finished naming it.
@@ -51,6 +59,8 @@ Okay. It's CPU-bound. That's literally where my CPU idea lives. Go attack transl
 Every. Single. Layer. Someone competent already living in it. This is where I crashed out for real. You grind a full day proving your idea is *sound* and the prize is finding out that sound and *needed* are different words. The map was already colored in. I was standing in the one spot with a flag going "guys? guys I have a flag?"
 
 ## The part I'm keeping, through gritted teeth
+
+![Drake meme: rejecting "building the optimizer", approving "shipping the tool that proved I shouldn't"](/lab/memes/drake.jpg)
 
 Here's the turn, and it's the only reason this isn't just me whining into a markdown file.
 
@@ -63,6 +73,8 @@ And one floor below that: there's no instrument that can even *tell you* where a
 So the deliverable was never the optimizer. It was the thing I built to decide whether the optimizer was worth building. The tool that talked me off the ledge is the tool worth shipping. Cool. Great. Love that for me.
 
 ## What I'm actually taking from this
+
+![Gru's Plan meme: "measure before I build" → "prove the idea is sound" → "it already shipped upstream" → the horror](/lab/memes/gru-plan.jpg)
 
 - Measure before you build. Not as a virtue — as *self-defense.* The discipline is the only reason I didn't ship a neural cache miss with a pitch deck.
 - An honest, specific negative beats a positive that's noise. "F2 is dead for this game, here's the GPU clock proving it" is a real finding even if it feels like a loss.
