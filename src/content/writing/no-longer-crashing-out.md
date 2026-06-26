@@ -1,62 +1,69 @@
 ---
 title: "I am no longer Crashing Out (another WinEmulation Story)"
-description: The sequel to the crash-out. I didn't fix the framerate. I found something better — the actual path, and the discipline to know it's real before I've earned the win.
+description: Sequel to the crash-out. I didn't fix the framerate — I found the actual path and the discipline to not lie about it yet. Still mad. Less doomed.
 topic: Performance
 date: 2026-06-27
 readTime: 6 min
 draft: false
 ---
 
-[Last time](/lab/writing/the-gpu-wasnt-even-trying/) I crashed out. A flagship GPU running a 2017 game at a third of its clock, every idea I had already someone else's job, and a negative result for my trouble. I ended that post mad at a GPU that wouldn't try.
+[Last time](/lab/writing/the-gpu-wasnt-even-trying/) I crashed out. Flagship GPU running a 2017 game at a third of its clock, every idea I had already somebody else's job, and a negative result for my trouble. I ended that one mad at a GPU that wouldn't try.
 
-I did not walk away. I want that on the record, because the version of me that wrote the last post would've assumed I would.
+I didn't walk away though. The version of me that wrote that post would've bet money I would. Joke's on him.
 
-## I measured everything, and everything was dead
+## I measured everything and every single thing was dead
 
-The whole next stretch was knobs. Every setting the stack exposes, A/B'd on real hardware with a frametime harness I built to stop myself from lying:
+![Gru's Plan meme: disabled GOS, updated Turnip + cut res, swept every Box64 flag, every result is flat](/lab/memes/p2-gru.jpg)
 
-- Samsung's game throttle, GOS, off → **worse** (it overheated and hard-throttled lower than the throttle I removed)
-- Turnip driver, a year newer → **flat**
-- Render resolution, cut by 3× → **flat**
-- Box64's aggressive dynarec flags → **wouldn't even launch**
-- Newer DXVK → **wouldn't launch either**
+The next stretch was just... knobs. Every setting the stack has, A/B'd on real hardware with a frametime harness I built specifically so I couldn't lie to myself about the numbers.
 
-Five swings. Nothing moved. And somewhere around the fifth flat result, the thing I was angry about stopped being a setback and started being **the answer.**
+- Samsung's game throttle, off → **worse.** It overheated and throttled *harder* than the throttle I removed. Incredible. Thanks Samsung.
+- Turnip driver, a year newer → flat.
+- Render resolution, cut by 3× → flat.
+- Box64's spicy dynarec flags → wouldn't even launch.
+- Newer DXVK → also wouldn't launch. Cool. Cool cool cool cool.
 
-## The wall has a shape
+Five swings. Nothing. And somewhere around flat result number five, the thing I'd been raging about stopped being a setback and started being the actual answer.
 
-You can't configure your way out of this because it isn't a misconfiguration. A flagship 2024 GPU pegged at 99.8% busy, rendering a 2017 game at 38fps, means the software stack is making the hardware do roughly **ten times the work** a native render would. That's not a wrong toggle. That's the cost of translation existing at all — D3D→Vulkan, x86→ARM, every layer paying a tax. No knob removes a tax.
+## The wall has a shape and the shape is stupid
 
-So I was staring at two doors, and I hated both:
+You can't config your way out because it's not a config problem. A flagship 2024 GPU, pegged at 99.8% busy, pushing a *2017* game at 38fps — that means the stack is making the hardware do like **ten times** the work a native render would. That's not a wrong toggle. That's the tax for translation existing *at all* — x86→ARM, D3D→Vulkan, every layer skimming off the top. No knob refunds a tax.
 
-1. **Keep tweaking settings** — which I'd just proven, five times, does nothing.
-2. **Fork the whole stack and fix it myself** — Wine, Box64, DXVK, Turnip. Millions of lines, maintained by expert teams for two decades. Forking all of it means I stop getting their improvements and spend the rest of my life just keeping up, never getting ahead. Drowning, alone, in five million lines of someone else's Wine.
+So I'm standing there staring at two doors and I hate both of them:
 
-That's the part where most people quit. Both doors are bad.
+![Two-buttons sweating-guy meme: "tweak settings forever" vs "fork 5M lines of Wine alone"](/lab/memes/p2-buttons.jpg)
+
+Door one: keep tweaking settings — which I just proved, *five times*, does jack. Door two: fork the entire stack and fix it myself. Wine, Box64, DXVK, Turnip. Millions of lines, built by expert teams over twenty years. Fork all that and I stop getting their updates and spend the rest of my life just running to stand still. Drowning, solo, in five million lines of somebody else's Wine.
+
+That's the spot where most people quit. Both doors suck.
 
 ## The third door
 
-Then it clicked, and it clicked *because* I'd been forced to stop flailing: **don't fork it. Inject into it.**
+![Always-has-been astronaut meme: "wait, my genius idea is just Proton?" / "always has been"](/lab/memes/p2-always.png)
 
-Let upstream update freely. Layer my fixes *on top* through the sanctioned injection points every layer already has — a Vulkan layer above the GPU driver, a wrapper before DXVK, a per-game fix database. Ship only the surgeon. Update means update *my* tool, never the dependencies. They keep improving underneath me; I keep my edge bolted on.
+Then it clicked — and it only clicked *because* I'd been forced to stop flailing: don't fork it. **Inject** into it.
 
-And the second it clicked, I realized I hadn't invented anything. **This is literally how Proton works.** Valve ships stock Wine and DXVK, patches thinly on top, keeps a per-game fix database, and you "just update Proton." It's not a gamble — it's a shipped pattern used by millions of people every day.
+Let upstream update however it wants. Bolt my fixes on top through the injection points every layer already has — a Vulkan layer above the GPU driver, a wrapper in front of DXVK, a per-game fix database. Ship only the surgeon. "Update" means update *my* thing, never the deps. They get faster underneath me; I keep my edge stapled on.
 
-Except there is no Proton for Android. Nobody's built the thing that auto-updates the emulation stack and injects fixes on top. The door I found was **empty.**
+And the second it clicked, I realized I hadn't invented shit. **This is just Proton.** Valve ships stock Wine + DXVK, patches thin on top, keeps a per-game fix DB, and you "just update Proton." It's not a moonshot — it's a shipped pattern millions of people use every single day.
 
-## Here's the part that makes this not a crash-out — and not a victory lap either
+Except there's no Proton for Android. Nobody built the thing that auto-updates the emulation stack and injects fixes on top. The door I found was *empty.*
 
-The old me would've sprinted through that door screaming, built for three weeks, and discovered too late that it was a closet. So I didn't. I made the unknowns prove themselves *first* — the single load-bearing question being: **can you even load a custom Vulkan layer under this emulator on a locked-down, non-rooted phone?**
+## Why this isn't a crash-out — and isn't a victory lap either
 
-Yes. Two live, shipping projects already do it. The injection point is real. The architecture isn't fantasy.
+![Drake meme: rejecting "sprint through the door, build for 3 weeks", approving "make the unknowns prove themselves first"](/lab/memes/p2-drake.jpg)
 
-And then — because I made a deal with myself this week to never let hope outrun evidence — the same investigation handed me the gut-punch, and I'm keeping it in: **proving the gun loads is not proving it fires.** The 10× bottleneck is CPU-side translation, and that's the *one* thing a GPU-side injection can't reach. I still haven't moved a single frame. The real test — does *any* injected fix actually make it faster — is still ahead of me, and it might say no.
+Old me sprints through that door screaming, builds for three weeks, finds out too late it's a broom closet. New me made a deal this week: hope never outruns evidence. So I didn't build — I made the unknowns prove themselves *first.* The big one: can you even load a custom Vulkan layer under this emulator, on a locked-down, non-rooted phone?
+
+Yes. Two shipping projects already do it. The injection point is real. The whole thing isn't a fantasy.
+
+And then — because I actually keep my own deals now — the same dig handed me the gut-punch, and I'm leaving it in: **the gun loading is not the gun firing.** That 10× bottleneck? It's CPU-side translation, and that's the *one* thing a GPU-side injection can't touch. I haven't moved a single frame. The real test — does any injected fix actually make it faster — is still sitting in front of me, and it might say no.
 
 So why am I not crashing out anymore?
 
-Not because I won. **I haven't.** Because crashing out is *thrashing without a target* — and I have a target now. I went from "everything's broken and it's all someone else's code" to a named project, a proven architecture, an empty niche, and one clean make-or-break experiment standing between me and knowing if it's real. That's not victory. That's something I didn't have a week ago: **a direction I've actually pressure-tested.**
+Not because I won. I **didn't.** Because crashing out is thrashing with no target — and I've got a target now. I went from "everything's broken and it's all someone else's code" to a named project, a proven architecture, an empty lane, and *one* clean make-or-break experiment between me and knowing if it's real. That's not a win. It's the thing I didn't have a week ago: a direction I actually stress-tested instead of just vibed into.
 
-The win post is the third one. I haven't earned it, and I'm not going to pretend I have — that pretending is exactly what this whole saga is about not doing.
+The win post is number three. I haven't earned it, and I'm not gonna fake it — faking it is the *entire* thing this saga exists to not do.
 
 But for the first time, I can see it from here.
 
