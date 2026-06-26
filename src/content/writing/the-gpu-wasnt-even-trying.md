@@ -4,7 +4,7 @@ description: A day of trying to make Android run PC games faster, watching every
 topic: Performance
 date: 2026-06-26
 readTime: 6 min
-draft: true
+draft: false
 ---
 
 This is a crash-out. I'm writing it while I'm still annoyed, on purpose, because by tomorrow I'll have sanded it into a neat little lessons-learned post and the neat version is a lie. The real version is: I spent a day chasing a performance idea, it died, I pivoted, that died too, and the only thing I have to show for it is a number that says *don't.*
