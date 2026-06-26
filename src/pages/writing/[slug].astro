@@ -23,62 +23,56 @@ const toc = headings.filter((h) => h.depth === 2);
 ---
 
 <BaseLayout title={`${d.title} — Thanuka Perera`} description={d.description}>
-  <div class="progress" id="progress"></div>
   <Nav />
-  <main class="wrap">
-    <nav class="breadcrumb">
-      <a href={withBase('writing')}>Writing</a><span class="sep">/</span><span>{d.topic}</span>
-    </nav>
-
-    <header class="detail-head">
-      <span class="detail-topic">{d.topic}</span>
-      <h1 class="detail-title">{d.title}</h1>
-      <p class="detail-summary">{d.description}</p>
-      <div class="detail-meta">
-        <span><b>Thanuka Perera</b></span>
-        <span>{fmtDate(d.date, true)}</span>
-        <span>{d.readTime} read</span>
-      </div>
-    </header>
-
-    {toc.length > 1 && (
-      <nav class="toc">
-        <span class="toc-title">In this note</span>
-        {toc.map((h) => <a href={`#${h.slug}`}>{h.text}</a>)}
+  <main id="top" class="lq-content">
+    <article class="lq-section lq-read">
+      <nav class="lq-breadcrumb">
+        <a href={withBase('writing')}>Writing</a><span class="sep">/</span><span>{d.topic}</span>
       </nav>
-    )}
 
-    <article class="prose"><Content /></article>
-
-    <section class="subscribe reveal">
-      <div>
-        <h4>New notes, delivered quietly.</h4>
-        <p>No email, no tracking — just a feed.</p>
+      <div class="lq-article-head">
+        <span class="lq-eyebrow">Field note · {d.topic}</span>
+        <h1 class="lq-article-title">{d.title}</h1>
+        <p class="lq-dek">{d.description}</p>
+        <p class="lq-byline"><b>Thanuka Perera</b> · {fmtDate(d.date, true)} · {d.readTime} read</p>
       </div>
-      <a class="btn btn-accent" href={withBase('feed.xml')}>Subscribe via RSS</a>
-    </section>
 
-    {others.length > 0 && (
-      <section class="read-next">
-        <div class="section-head" style="margin-top:0"><h2>Read next</h2><a href={withBase('writing')}>All →</a></div>
-        <div class="rn-grid">
-          {others.map((p) => (
-            <a class="rn-card reveal" href={withBase(`writing/${p.slug}`)}>
-              <span class="proj-topic">{p.data.topic}</span>
-              <h5>{p.data.title}</h5>
-              <div class="rn-meta">{fmtDate(p.data.date)} · {p.data.readTime}</div>
-            </a>
-          ))}
+      {toc.length > 1 && (
+        <div class="lq-glass lq-toc" style="margin-bottom:18px">
+          <p class="lq-toc-title">On this page</p>
+          <ol>{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
         </div>
-      </section>
-    )}
-  </main>
-  <Footer />
-</BaseLayout>
+      )}
 
-<style>
-  .toc { max-width: var(--readw); margin: 4px 0 28px; padding: 14px 18px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--bg-soft); }
-  .toc-title { display: block; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-2); margin-bottom: 8px; }
-  .toc a { display: inline-block; font-size: 0.88rem; color: var(--muted); margin-right: 16px; }
-  .toc a:hover { color: var(--accent); }
-</style>
+      <div class="lq-glass" style="padding:clamp(24px,4vw,40px)">
+        <div class="lq-prose lq-prose--lead"><Content /></div>
+      </div>
+
+      <div class="lq-glass lq-subscribe" style="margin-top:18px">
+        <div>
+          <h4>New notes when there's something worth writing.</h4>
+          <p>No email, no tracking, no newsletter funnel — just a feed.</p>
+        </div>
+        <a class="lq-gel lq-gel--accent" href={withBase('feed.xml')}>Subscribe via RSS</a>
+      </div>
+
+      {others.length > 0 && (
+        <section style="margin-top:42px">
+          <div class="lq-sechead"><h2><span class="lq-drop"></span>Read next</h2><a href={withBase('writing')}>All →</a></div>
+          <div class="lq-glass lq-posts" style="padding:4px 14px">
+            {others.map((p) => (
+              <a class="lq-postrow" href={withBase(`writing/${p.slug}`)}>
+                <span class="lq-postrow-topic">{p.data.topic}</span>
+                <h3 class="lq-postrow-h">{p.data.title}</h3>
+                <p class="lq-postrow-desc">{p.data.description}</p>
+                <span class="lq-postrow-meta">{fmtDate(p.data.date)}<span class="read">{p.data.readTime}</span></span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+    </article>
+
+    <Footer />
+  </main>
+</BaseLayout>

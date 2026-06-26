@@ -1,0 +1,29 @@
+/* ============================================================================
+   Site-specific bridges layered on top of liquid-kit/liquid.css.
+   Only what the kit doesn't cover: real (SVG/image) project art, real meme
+   images as exhibits, the sound toggle, and project/about detail-page chrome.
+   ============================================================================ */
+html, body { margin: 0; }
+body { min-height: 100dvh; background: #04161a; overflow-x: hidden; }
+[data-theme='light'] body { background: #dff3f5; }
+
+/* real project art (inline SVG) fills the card / feature frame like an <img> */
+.lq-card-art > svg, .lq-feature-art > svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* exhibits: real meme images framed as glass evidence (kit frames a placeholder div) */
+.lq-exhibit > img { width: 100%; display: block; border-radius: var(--r-card); border: 1px solid var(--glass-bd); box-shadow: var(--surface-sh); background: var(--glass-bg-2); }
+.lq-exhibit .fig { color: var(--lotus); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* sound toggle reads "off" when muted */
+.lq-iconbtn.off { opacity: 0.5; }
+
+/* detail-page chrome (project + about) the showcase didn't include */
+.lq-breadcrumb { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); margin: 0 0 16px; }
+.lq-breadcrumb a:hover { color: var(--aqua); }
+.lq-breadcrumb .sep { margin: 0 8px; opacity: 0.5; }
+.lq-specs { display: flex; flex-wrap: wrap; gap: 16px 30px; }
+.lq-specs .k { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 3px; }
+.lq-specs .v { color: var(--ink-strong); font-size: 0.92rem; }
+.lq-detaillinks { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.lq-detail-art { position: relative; aspect-ratio: 21 / 9; overflow: hidden; border-radius: var(--r-card); border: 1px solid var(--glass-bd); box-shadow: var(--surface-sh); margin: 22px 0; }
+.lq-detail-art > svg, .lq-detail-art > img { width: 100%; height: 100%; object-fit: cover; display: block; }

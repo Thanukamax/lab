@@ -6,6 +6,7 @@ import Footer from '../../components/Footer.astro';
 import { getThumb } from '../../utils/thumbs';
 import { getHero } from '../../utils/heroes';
 import { withBase } from '../../utils/url';
+import { verdict } from '../../utils/verdict';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects', (p) => !p.data.draft);
@@ -15,6 +16,7 @@ export async function getStaticPaths() {
 const { project } = Astro.props;
 const { Content } = await project.render();
 const d = project.data;
+const v = verdict(d.status);
 
 const others = (await getCollection('projects', (p) => !p.data.draft))
   .filter((p) => p.slug !== project.slug)
@@ -22,56 +24,62 @@ const others = (await getCollection('projects', (p) => !p.data.draft))
   .slice(0, 3);
 
 const linkLabels: Record<string, string> = { repo: 'Source', demo: 'Demo', pypi: 'PyPI', site: 'Live site' };
-const links = Object.entries(d.links).filter(([, v]) => v) as [string, string][];
+const links = Object.entries(d.links).filter(([, val]) => val) as [string, string][];
 ---
 
 <BaseLayout title={`${d.title} — Thanuka Perera`} description={d.summary}>
-  <div class="progress" id="progress"></div>
   <Nav />
-  <main class="wrap">
-    <nav class="breadcrumb">
-      <a href={withBase('projects')}>Projects</a><span class="sep">/</span><span>{d.topic}</span>
-    </nav>
+  <main id="top" class="lq-content">
+    <article class="lq-section lq-read">
+      <nav class="lq-breadcrumb">
+        <a href={withBase('projects')}>Work</a><span class="sep">/</span><span>{d.topic}</span>
+      </nav>
 
-    <header class="detail-head">
-      <span class="detail-topic">{d.topic}</span>
-      <h1 class="detail-title">{d.title}</h1>
-      <p class="detail-summary">{d.summary}</p>
-    </header>
-
-    <div class="specs">
-      <div class="spec"><span class="k">Status</span><span class="v">{d.status}</span></div>
-      <div class="spec"><span class="k">Role</span><span class="v">{d.role}</span></div>
-      <div class="spec"><span class="k">Year</span><span class="v">{d.year}</span></div>
-      <div class="spec"><span class="k">Stack</span><span class="v">{d.stack.join(' · ')}</span></div>
-    </div>
-
-    {links.length > 0 && (
-      <div class="detail-links">
-        {links.map(([k, v], i) => (
-          <a class={i === 0 ? 'btn btn-accent' : 'btn'} href={v}>{linkLabels[k] ?? k} ↗</a>
-        ))}
+      <div class="lq-article-head">
+        <span class="lq-eyebrow">{d.topic} · {d.year}</span>
+        <h1 class="lq-article-title">{d.title}</h1>
+        <p class="lq-dek">{d.summary}</p>
+        <p style="margin-top:14px"><span class={`lq-verdict lq-verdict--${v.kit}`}><span class="g">{v.glyph}</span>{v.label}</span></p>
       </div>
-    )}
 
-    <figure class="detail-art" style="margin-left:0;margin-right:0">
-      {d.heroImage ? <img src={d.heroImage} alt="" /> : <Fragment set:html={getHero(project.slug) ?? getThumb(d.topic)} />}
-    </figure>
-
-    <article class="prose"><Content /></article>
-
-    <section class="read-next">
-      <div class="section-head" style="margin-top:0"><h2>More projects</h2><a href={withBase('projects')}>All →</a></div>
-      <div class="rn-grid">
-        {others.map((p) => (
-          <a class="rn-card reveal" href={withBase(`projects/${p.slug}`)}>
-            <span class="proj-topic">{p.data.topic}</span>
-            <h5>{p.data.title}</h5>
-            <div class="rn-meta">{p.data.status} · {p.data.role}</div>
-          </a>
-        ))}
+      <div class="lq-glass lq-specs" style="padding:18px 22px; margin:22px 0">
+        <div><span class="k">Role</span><span class="v">{d.role}</span></div>
+        <div><span class="k">Year</span><span class="v">{d.year}</span></div>
+        <div><span class="k">Stack</span><span class="v">{d.stack.join(' · ')}</span></div>
       </div>
-    </section>
+
+      {links.length > 0 && (
+        <div class="lq-detaillinks">
+          {links.map(([k, val], i) => (
+            <a class={`lq-gel ${i === 0 ? 'lq-gel--primary' : 'lq-gel--ghost'}`} href={val}>{linkLabels[k] ?? k} ↗</a>
+          ))}
+        </div>
+      )}
+
+      <figure class="lq-detail-art">
+        {d.heroImage ? <img src={d.heroImage} alt="" /> : <Fragment set:html={getHero(project.slug) ?? getThumb(d.topic)} />}
+      </figure>
+
+      <div class="lq-glass" style="padding:clamp(24px,4vw,40px)">
+        <div class="lq-prose"><Content /></div>
+      </div>
+
+      {others.length > 0 && (
+        <section style="margin-top:42px">
+          <div class="lq-sechead"><h2><span class="lq-drop"></span>More work</h2><a href={withBase('projects')}>All →</a></div>
+          <div class="lq-glass lq-posts" style="padding:4px 14px">
+            {others.map((p) => { const ov = verdict(p.data.status); return (
+              <a class="lq-work" href={withBase(`projects/${p.slug}`)}>
+                <span class="lq-work-dot" style="background:var(--aqua)"></span>
+                <span class="lq-work-main"><span class="lq-work-title">{p.data.title}</span><span class="lq-work-sum">{p.data.summary}</span></span>
+                <span class="lq-work-topic">{p.data.topic}</span><span class="lq-work-year">{p.data.year}</span>
+              </a>
+            ); })}
+          </div>
+        </section>
+      )}
+    </article>
+
+    <Footer />
   </main>
-  <Footer />
 </BaseLayout>

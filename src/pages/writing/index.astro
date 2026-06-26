@@ -10,27 +10,31 @@ const posts = (await getCollection('writing', (p) => !p.data.draft)).sort(
 );
 ---
 
-<BaseLayout title="Writing — Thanuka Perera" description="Build logs, field notes, and essays on systems, performance, and on-device AI.">
+<BaseLayout title="Writing — Thanuka Perera" description="Build logs, field notes, and the occasional idea measured until it fell apart.">
   <Nav />
-  <main class="wrap">
-    <header class="hero" style="padding-bottom:8px">
-      <div class="eyebrow">Writing</div>
-      <h1>Field notes.</h1>
-      <p class="hero-sub">Build logs, opinions, and the occasional debugging war story — written from lived experience, not tutorials. <a href={withBase('feed.xml')} style="color:var(--accent)">Subscribe via RSS →</a></p>
+  <main id="top" class="lq-content">
+    <header class="lq-intro">
+      <p class="lq-eyebrow">thanuka.lab · writing</p>
+      <h1>Field notes from the <em>deep</em> end.</h1>
+      <p class="lq-intro-bio">
+        Build logs, opinions, and the occasional idea I measured until it fell apart — written from
+        doing the thing, not reading about it. <a href={withBase('feed.xml')} style="color:var(--aqua)">Subscribe via RSS →</a>
+      </p>
     </header>
 
-    <section class="post-list" style="margin-top:24px">
-      {posts.map((post) => (
-        <a class="post-row reveal" href={withBase(`writing/${post.slug}`)}>
-          <div>
-            <span class="post-topic">{post.data.topic}</span>
-            <h3 class="post-h">{post.data.title}</h3>
-            <p class="post-desc">{post.data.description}</p>
-          </div>
-          <div class="post-date">{fmtDate(post.data.date)}<span class="read">{post.data.readTime} read</span></div>
-        </a>
-      ))}
+    <section class="lq-section lq-wide">
+      <div class="lq-glass lq-posts" style="padding:4px 14px">
+        {posts.map((post) => (
+          <a class="lq-postrow" href={withBase(`writing/${post.slug}`)}>
+            <span class="lq-postrow-topic">{post.data.topic}</span>
+            <h3 class="lq-postrow-h">{post.data.title}</h3>
+            <p class="lq-postrow-desc">{post.data.description}</p>
+            <span class="lq-postrow-meta">{fmtDate(post.data.date)}<span class="read">{post.data.readTime}</span></span>
+          </a>
+        ))}
+      </div>
     </section>
+
+    <Footer />
   </main>
-  <Footer />
 </BaseLayout>

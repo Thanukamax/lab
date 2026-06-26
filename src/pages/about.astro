@@ -6,45 +6,51 @@ import Footer from '../components/Footer.astro';
 
 <BaseLayout title="About — Thanuka Perera" description="Computer Science undergraduate and open-source builder from Colombo, Sri Lanka.">
   <Nav />
-  <main class="wrap">
-    <nav class="breadcrumb"><span>About</span></nav>
-    <header class="detail-head">
-      <span class="detail-topic">About</span>
-      <h1 class="detail-title">Thanuka Perera</h1>
-      <p class="detail-summary">Computer Science undergraduate and open-source builder from Colombo, Sri Lanka.</p>
-    </header>
+  <main id="top" class="lq-content">
+    <article class="lq-section lq-read">
+      <div class="lq-article-head">
+        <span class="lq-eyebrow">thanuka.lab · about</span>
+        <h1 class="lq-article-title">Thanuka Perera</h1>
+        <p class="lq-dek">Computer Science undergraduate and open-source builder from Colombo, Sri Lanka.</p>
+      </div>
 
-    <article class="prose">
-      <p>
-        I'm a second-year CS student at the University of Westminster (via IIT, Colombo), but most
-        of what I know I've learned by building things and shipping them. I work across the
-        stack — cloud-native backends, systems-level tooling in Rust and C++, and AI that runs
-        entirely on-device — usually on a laptop with a 4&nbsp;GB GPU that forces me to be honest
-        about performance.
-      </p>
-      <h2>What I care about</h2>
-      <p>
-        The low-level details other people skip: binary formats, cache behaviour, the difference
-        between a tool that works and one that feels instant. I treat <strong>latency as a
-        feature</strong>, I write tests for things I could get away with not testing, and I'd
-        rather publish an honest negative result than a hyped claim that doesn't survive a bigger
-        sample size.
-      </p>
-      <h2>Right now</h2>
-      <p>
-        Building <strong>shrinkray</strong> (reversible texture compression for game installs),
-        <strong> Diana</strong> (a local-first voice assistant), and contributing to open-source
-        projects. Long-term, I want to work on the kind of enterprise platforms and developer
-        infrastructure that real systems are built on.
-      </p>
-      <h2>Get in touch</h2>
-      <p>
-        Email <a href="mailto:thanukasehasnaperera@gmail.com">thanukasehasnaperera@gmail.com</a>,
-        find my code on <a href="https://github.com/Thanukamax">GitHub</a>, the bigger picture on
-        my <a href="https://thanukamax.github.io">portfolio</a>, or connect on
-        <a href="https://www.linkedin.com/in/thanuka-perera-889240337"> LinkedIn</a>.
-      </p>
+      <div class="lq-glass" style="padding:clamp(24px,4vw,40px)">
+        <div class="lq-prose">
+          <p>
+            I'm a second-year CS student at the University of Westminster (via IIT, Colombo), but most
+            of what I actually know I learned by building things, shipping them, and watching a fair
+            few of them fall apart the moment I measured them. I work across the stack — cloud-native
+            backends, systems-level tooling in Rust and C++, and AI that runs entirely on-device —
+            usually on a laptop with a 4&nbsp;GB GPU that keeps me honest about performance.
+          </p>
+          <h2>What I care about</h2>
+          <p>
+            The low-level details other people skip: binary formats, cache behaviour, where a frame
+            actually went. The difference between a tool that works and one that feels instant. I
+            treat <strong>latency as a feature</strong>, I write tests for things I could get away
+            with not testing, and I'd rather publish an honest negative result — "turns out this
+            doesn't work, here's why" — than a hyped claim that doesn't survive a bigger sample size.
+            Measure before you build. Not as a virtue; as self-defense.
+          </p>
+          <h2>Right now</h2>
+          <p>
+            Building <strong>shrinkray</strong> (reversible texture compression for game installs),
+            <strong> Diana</strong> (a local-first voice assistant), and contributing to open-source
+            projects — currently somewhere between "this is brilliant" and "why did I think this would
+            work." Long-term, I want to work on the kind of enterprise platforms and developer
+            infrastructure that real systems are built on.
+          </p>
+          <h2>Get in touch</h2>
+          <p>
+            Email <a href="mailto:thanukasehasnaperera@gmail.com">thanukasehasnaperera@gmail.com</a>,
+            find my code on <a href="https://github.com/Thanukamax">GitHub</a>, the bigger picture on
+            my <a href="https://thanukamax.github.io">portfolio</a>, or connect on
+            <a href="https://www.linkedin.com/in/thanuka-perera-889240337"> LinkedIn</a>.
+          </p>
+        </div>
+      </div>
     </article>
+
+    <Footer />
   </main>
-  <Footer />
 </BaseLayout>
