@@ -1,154 +1,193 @@
 // Bespoke per-project hero art. Inline SVG (no asset pipeline, no base-path issues).
-// One visual system: dark tile, teal glow accent, technical linework. Unique concept each.
-// IDs are slug-suffixed so multiple inline SVGs on one page never collide.
+// One visual system: dark teal-black tile, faded grid, aqua glow + lotus undertone,
+// soft vignette and a whisper of film grain. Technical linework, unique concept each.
+// Composed inside the central band (y ~40–200) so it survives both the 16/10 card
+// crop and the 21/9 detail-banner crop. IDs are slug-suffixed to avoid collisions.
 
-const A = '#4fd1c0'; // teal accent (matches --accent dark)
-const W = 'rgba(255,255,255,0.9)';
-const WL = 'rgba(255,255,255,0.2)';
-const MONO = 'font-family="ui-monospace, monospace"';
+const A = '#5fdccb'; // aqua accent
+const A2 = '#2bb6a4'; // deeper aqua
+const L = '#ff86b3'; // lotus (secondary accent)
+const W = 'rgba(255,255,255,0.92)';
+const WM = 'rgba(255,255,255,0.5)';
+const WL = 'rgba(255,255,255,0.22)';
+const WF = 'rgba(255,255,255,0.08)';
+const INK = '#06121a'; // dark ink for text on accent fills
+const MONO = 'font-family="ui-monospace, SFMono-Regular, Menlo, monospace"';
 
-const GRID = `<g stroke="rgba(255,255,255,0.045)" stroke-width="1">
-  <line x1="0" y1="60" x2="400" y2="60"/><line x1="0" y1="120" x2="400" y2="120"/><line x1="0" y1="180" x2="400" y2="180"/>
-  <line x1="80" y1="0" x2="80" y2="240"/><line x1="160" y1="0" x2="160" y2="240"/><line x1="240" y1="0" x2="240" y2="240"/><line x1="320" y1="0" x2="320" y2="240"/>
-</g>`;
-
-const mk = (slug: string, body: string, defs = '') => `<svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+const mk = (s: string, body: string, defs = '') => `<svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
 <defs>
-<linearGradient id="bg-${slug}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0e1116"/><stop offset="1" stop-color="#070809"/></linearGradient>
-<radialGradient id="tint-${slug}" cx="0.82" cy="0.12" r="0.95"><stop offset="0" stop-color="${A}" stop-opacity="0.17"/><stop offset="0.6" stop-color="${A}" stop-opacity="0"/></radialGradient>
-<filter id="glow-${slug}" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<linearGradient id="bg-${s}" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="#101824"/><stop offset="1" stop-color="#06090d"/></linearGradient>
+<radialGradient id="ga-${s}" cx="0.8" cy="0.08" r="0.95"><stop offset="0" stop-color="${A}" stop-opacity="0.22"/><stop offset="0.62" stop-color="${A}" stop-opacity="0"/></radialGradient>
+<radialGradient id="gl-${s}" cx="0.1" cy="1" r="0.9"><stop offset="0" stop-color="${L}" stop-opacity="0.13"/><stop offset="0.6" stop-color="${L}" stop-opacity="0"/></radialGradient>
+<radialGradient id="vig-${s}" cx="0.5" cy="0.46" r="0.75"><stop offset="0.5" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="0.5"/></radialGradient>
+<radialGradient id="gm-${s}" cx="0.5" cy="0.5" r="0.72"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient>
+<mask id="gmask-${s}"><rect width="400" height="240" fill="url(#gm-${s})"/></mask>
+<pattern id="grid-${s}" width="22" height="22" patternUnits="userSpaceOnUse"><path d="M22 0 H0 V22" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern>
+<filter id="glow-${s}" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="2.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="grain-${s}"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope="0.06"/></feComponentTransfer></filter>
 ${defs}</defs>
-<rect width="400" height="240" fill="url(#bg-${slug})"/>
-<rect width="400" height="240" fill="url(#tint-${slug})"/>
-${GRID}
+<rect width="400" height="240" fill="url(#bg-${s})"/>
+<rect width="400" height="240" fill="url(#grid-${s})" mask="url(#gmask-${s})"/>
+<rect width="400" height="240" fill="url(#ga-${s})"/>
+<rect width="400" height="240" fill="url(#gl-${s})"/>
 ${body}
+<rect width="400" height="240" fill="url(#vig-${s})"/>
+<rect width="400" height="240" filter="url(#grain-${s})"/>
 </svg>`;
 
 type Art = (slug: string) => string;
 
 const ART: Record<string, Art> = {
-  // mip pyramid being compressed
+  // shrinkray — nested mip squares → reversible swap → smaller result
   shrinkray: (s) => mk(s, `
-    <g fill="none" stroke="${WL}"><rect x="44" y="56" width="128" height="128" rx="4"/></g>
-    <g fill="none" stroke="rgba(255,255,255,0.32)"><rect x="44" y="56" width="64" height="64" rx="3"/><rect x="44" y="56" width="32" height="32" rx="2"/><rect x="44" y="56" width="16" height="16" rx="1"/></g>
-    <text x="46" y="202" fill="rgba(255,255,255,0.4)" ${MONO} font-size="10">mip 0 · 1 · 2 · 3</text>
-    <g filter="url(#glow-${s})"><path d="M214 110 H300 M214 130 H300 M256 96 L300 120 L256 144" stroke="${A}" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
-    <rect x="322" y="102" width="40" height="40" rx="5" fill="${A}" filter="url(#glow-${s})"/>
-    <text x="342" y="127" fill="#04110f" ${MONO} font-size="11" font-weight="700" text-anchor="middle">−40%</text>`),
+    <rect x="54" y="60" width="116" height="116" rx="5" fill="${WF}" stroke="${WL}"/>
+    <rect x="54" y="60" width="78" height="78" rx="4" fill="none" stroke="rgba(255,255,255,0.26)"/>
+    <rect x="54" y="60" width="50" height="50" rx="3" fill="none" stroke="${A}" stroke-opacity="0.55"/>
+    <rect x="54" y="60" width="30" height="30" rx="2" fill="${A}" fill-opacity="0.18" stroke="${A}" filter="url(#glow-${s})"/>
+    <text x="54" y="192" fill="${WM}" ${MONO} font-size="9">mip 0 · 1 · 2 · 3</text>
+    <g stroke="${A}" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow-${s})">
+      <path d="M204 108 H252 M242 100 L252 108 L242 116"/><path d="M252 132 H204 M214 124 L204 132 L214 140"/></g>
+    <rect x="300" y="98" width="60" height="44" rx="9" fill="${A}" filter="url(#glow-${s})"/>
+    <text x="330" y="125" fill="${INK}" ${MONO} font-size="13" font-weight="700" text-anchor="middle">−40%</text>`),
 
-  // residual delta between two blocks
+  // delta-mip — base plane + residual sheet → restored plane
   'delta-mip': (s) => mk(s, `
-    <g ${MONO} font-size="11" fill="rgba(255,255,255,0.5)"><text x="58" y="56">original</text><text x="300" y="56">restore</text></g>
-    <g fill="rgba(255,255,255,0.16)"><rect x="50" y="68" width="78" height="78" rx="4"/></g>
-    <g fill="none" stroke="${A}" stroke-width="2" filter="url(#glow-${s})"><path d="M180 107 q14 -14 28 0 M180 107 q14 14 28 0"/><circle cx="222" cy="107" r="3" fill="${A}"/></g>
-    <text x="170" y="150" fill="${A}" ${MONO} font-size="20" font-weight="700">Δ</text>
-    <g fill="none" stroke="rgba(255,255,255,0.5)"><rect x="292" y="68" width="78" height="78" rx="4"/></g>
-    <g fill="rgba(255,255,255,0.5)"><circle cx="312" cy="92" r="2"/><circle cx="338" cy="110" r="2"/><circle cx="356" cy="128" r="2"/><circle cx="322" cy="132" r="2"/></g>
-    <text x="50" y="186" fill="rgba(255,255,255,0.4)" ${MONO} font-size="10">byte-exact · +14.7% net</text>`),
+    <rect x="58" y="74" width="90" height="90" rx="6" fill="${WF}" stroke="${WL}"/>
+    <text x="58" y="66" fill="${WM}" ${MONO} font-size="9">base</text>
+    <g filter="url(#glow-${s})"><rect x="172" y="100" width="92" height="40" rx="6" fill="none" stroke="${A}" stroke-width="1.6"/></g>
+    <path d="M182 120 q12 -12 23 0 t23 0 t23 0" fill="none" stroke="${A}" stroke-width="1.6"/>
+    <text x="172" y="92" fill="${A}" ${MONO} font-size="9">Δ residual</text>
+    <text x="156" y="156" fill="${A}" ${MONO} font-size="18" font-weight="700">+</text>
+    <g stroke="${A}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow-${s})"><path d="M276 120 H292 M284 112 L292 120 L284 128"/></g>
+    <rect x="300" y="74" width="90" height="90" rx="6" fill="none" stroke="${WM}"/>
+    <text x="300" y="66" fill="${WM}" ${MONO} font-size="9">restore</text>
+    <g fill="${WM}"><circle cx="320" cy="98" r="2"/><circle cx="350" cy="116" r="2"/><circle cx="368" cy="142" r="2"/><circle cx="330" cy="140" r="2"/></g>
+    <text x="58" y="186" fill="${WM}" ${MONO} font-size="9">byte-exact</text>`),
 
-  // crescent moon + voice waveform (Diana 🌙)
+  // diana — crescent moon orb + privacy ring + voice waveform
   diana: (s) => mk(s, `
-    <circle cx="104" cy="120" r="48" fill="${A}" filter="url(#glow-${s})"/>
-    <circle cx="124" cy="108" r="44" fill="#0a0c10"/>
-    <g stroke="${W}" stroke-width="3" stroke-linecap="round">
-      <path d="M214 120 v-12"/><path d="M232 120 v-30"/><path d="M250 120 v-46"/><path d="M268 120 v-22"/><path d="M286 120 v-40"/><path d="M304 120 v-16"/><path d="M322 120 v-28"/>
-      <path d="M214 120 v12" opacity="0.45"/><path d="M232 120 v30" opacity="0.45"/><path d="M250 120 v46" opacity="0.45"/><path d="M268 120 v22" opacity="0.45"/><path d="M286 120 v40" opacity="0.45"/><path d="M304 120 v16" opacity="0.45"/><path d="M322 120 v28" opacity="0.45"/>
+    <circle cx="108" cy="118" r="62" fill="none" stroke="${A}" stroke-opacity="0.16" stroke-dasharray="3 6"/>
+    <circle cx="100" cy="118" r="44" fill="${A}" filter="url(#glow-${s})"/>
+    <circle cx="119" cy="105" r="40" fill="#080b0f"/>
+    <g stroke="url(#wav-${s})" stroke-width="4" stroke-linecap="round" fill="none">
+      <path d="M212 118 V100"/><path d="M230 118 V76"/><path d="M248 118 V60"/><path d="M266 118 V88"/><path d="M284 118 V68"/><path d="M302 118 V94"/><path d="M320 118 V80"/>
+      <path d="M212 118 V136" opacity="0.4"/><path d="M230 118 V160" opacity="0.4"/><path d="M248 118 V176" opacity="0.4"/><path d="M266 118 V148" opacity="0.4"/><path d="M284 118 V168" opacity="0.4"/><path d="M302 118 V142" opacity="0.4"/><path d="M320 118 V156" opacity="0.4"/>
+    </g>`,
+    `<linearGradient id="wav-${s}" gradientUnits="userSpaceOnUse" x1="0" y1="58" x2="0" y2="178"><stop offset="0" stop-color="${A}"/><stop offset="1" stop-color="${A2}"/></linearGradient>`),
+
+  // sam — dimmer sibling orb + battery (bolt) + cpu chip
+  sam: (s) => mk(s, `
+    <circle cx="92" cy="120" r="32" fill="${A}" fill-opacity="0.85" filter="url(#glow-${s})"/>
+    <circle cx="106" cy="110" r="28" fill="#080b0f"/>
+    <g fill="none" stroke="${WL}" stroke-width="2"><rect x="180" y="92" width="118" height="50" rx="9"/><rect x="298" y="106" width="9" height="22" rx="3" fill="${WL}"/></g>
+    <rect x="188" y="100" width="58" height="34" rx="5" fill="${A}" filter="url(#glow-${s})"/>
+    <path d="M214 104 L201 124 H212 L208 138 L224 116 H212 Z" fill="${INK}"/>
+    <g fill="none" stroke="${WM}" stroke-width="1.4"><rect x="196" y="166" width="44" height="30" rx="4"/>
+      <path d="M205 166 v-7 M218 166 v-7 M231 166 v-7 M205 196 v7 M218 196 v7 M231 196 v7 M196 174 h-7 M196 188 h-7 M240 174 h7 M240 188 h7"/></g>
+    <text x="218" y="185" fill="${WM}" ${MONO} font-size="9" text-anchor="middle">CPU</text>`),
+
+  // donghua-cli — terminal window, prompt, progress, glowing play
+  'donghua-cli': (s) => mk(s, `
+    <g fill="none" stroke="${WL}" stroke-width="1.4"><rect x="56" y="52" width="288" height="136" rx="10"/></g>
+    <path d="M56 78 H344" stroke="${WF}"/>
+    <g fill="${WM}"><circle cx="74" cy="65" r="3.5"/><circle cx="88" cy="65" r="3.5"/><circle cx="102" cy="65" r="3.5"/></g>
+    <text x="74" y="106" fill="${WM}" ${MONO} font-size="11">$ dhua "BTTH s5"</text>
+    <text x="74" y="128" fill="${A}" ${MONO} font-size="11">▸ resolving 1080p</text>
+    <rect x="74" y="146" width="178" height="5" rx="2.5" fill="${WF}"/>
+    <rect x="74" y="146" width="104" height="5" rx="2.5" fill="${A}"/>
+    <circle cx="298" cy="138" r="26" fill="none" stroke="${A}" stroke-opacity="0.4"/>
+    <path d="M289 126 L313 138 L289 150 Z" fill="${A}" filter="url(#glow-${s})"/>`),
+
+  // vn2apk — game folder → arrow → phone (APK + signed check)
+  vn2apk: (s) => mk(s, `
+    <g fill="none" stroke="${WL}" stroke-width="1.8"><path d="M54 86 h40 l10 12 h52 a6 6 0 0 1 6 6 v54 a6 6 0 0 1 -6 6 H54 a6 6 0 0 1 -6 -6 V92 a6 6 0 0 1 6 -6 Z"/></g>
+    <text x="84" y="132" fill="${WM}" ${MONO} font-size="9">/game</text>
+    <g stroke="${A}" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow-${s})"><path d="M184 120 H236 M225 109 L236 120 L225 131"/></g>
+    <rect x="266" y="72" width="80" height="124" rx="15" fill="none" stroke="${A}" stroke-width="2" filter="url(#glow-${s})"/>
+    <rect x="296" y="80" width="20" height="4" rx="2" fill="${A}"/>
+    <text x="306" y="138" fill="${A}" ${MONO} font-size="13" font-weight="700" text-anchor="middle">APK</text>
+    <g transform="translate(306,166)"><circle r="11" fill="none" stroke="${A}" stroke-width="1.6"/><path d="M-4 0 l3 3 l6 -7" stroke="${A}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>`),
+
+  // crow — surveillance frames flanking a central watching lens, one detection
+  crow: (s) => mk(s, `
+    <g fill="none" stroke="${WF}"><rect x="40" y="56" width="116" height="56" rx="4"/><rect x="40" y="124" width="116" height="56" rx="4"/></g>
+    <g fill="none" stroke="${WL}" stroke-width="1.3"><rect x="244" y="56" width="116" height="56" rx="4"/><rect x="244" y="124" width="116" height="56" rx="4"/></g>
+    <rect x="262" y="66" width="40" height="38" rx="2" fill="none" stroke="${A}" stroke-width="2" filter="url(#glow-${s})"/>
+    <text x="262" y="62" fill="${A}" ${MONO} font-size="9">0.98</text>
+    <g filter="url(#glow-${s})"><circle cx="200" cy="118" r="30" fill="none" stroke="${A}" stroke-width="2"/><circle cx="200" cy="118" r="13" fill="none" stroke="${A}" stroke-width="2"/><circle cx="200" cy="118" r="4" fill="${A}"/></g>
+    <g stroke="${WL}" stroke-dasharray="2 4" fill="none"><path d="M170 116 H156"/><path d="M230 110 H244"/></g>
+    <circle cx="50" cy="168" r="4" fill="${L}"/><text x="60" y="172" fill="${WM}" ${MONO} font-size="9">REC</text>`),
+
+  // warmcore — x86 stack → warm translation core (PGO) → arm64 stack
+  warmcore: (s) => mk(s, `
+    <text x="46" y="90" fill="${WM}" ${MONO} font-size="9">x86</text>
+    <g fill="none" stroke="${WL}"><rect x="46" y="96" width="56" height="18" rx="3"/><rect x="46" y="118" width="56" height="18" rx="3"/><rect x="46" y="140" width="56" height="18" rx="3"/></g>
+    <path d="M102 127 H160" stroke="${WL}" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <circle cx="200" cy="120" r="34" fill="url(#warm-${s})" filter="url(#glow-${s})"/>
+    <circle cx="200" cy="120" r="34" fill="none" stroke="${A}" stroke-width="1.4" stroke-opacity="0.7"/>
+    <text x="200" y="124" fill="${INK}" ${MONO} font-size="11" font-weight="700" text-anchor="middle">PGO</text>
+    <g stroke="${A}" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow-${s})"><path d="M240 120 H300 M289 109 L300 120 L289 131"/></g>
+    <text x="306" y="90" fill="${WM}" ${MONO} font-size="9">arm64</text>
+    <g fill="none" stroke="${A}" stroke-opacity="0.55"><rect x="306" y="96" width="56" height="18" rx="3"/><rect x="306" y="118" width="56" height="18" rx="3"/><rect x="306" y="140" width="56" height="18" rx="3"/></g>`,
+    `<radialGradient id="warm-${s}" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#ffe08a"/><stop offset="0.6" stop-color="${L}"/><stop offset="1" stop-color="${L}" stop-opacity="0.25"/></radialGradient>`),
+
+  // vulkan-renderer — wireframe polyhedron, one lit face, faint pipeline tick
+  'vulkan-renderer': (s) => mk(s, `
+    <g stroke="${WL}" fill="none" stroke-width="1.3"><path d="M200 56 L262 96 L240 168 L160 168 L138 96 Z"/><path d="M200 56 L240 168 M200 56 L160 168 M262 96 L160 168 M138 96 L240 168 M200 56 L200 120 M138 96 L262 96"/></g>
+    <path d="M200 56 L262 96 L200 120 Z" fill="${A}" fill-opacity="0.12" stroke="${A}" stroke-width="1.5" filter="url(#glow-${s})"/>
+    <g fill="${A}"><circle cx="200" cy="56" r="3"/><circle cx="262" cy="96" r="3"/><circle cx="240" cy="168" r="3"/><circle cx="160" cy="168" r="3"/><circle cx="138" cy="96" r="3"/><circle cx="200" cy="120" r="2.5"/></g>
+    <text x="148" y="190" fill="${WM}" ${MONO} font-size="9">VkPipeline</text>
+    <rect x="148" y="196" width="104" height="3" rx="1.5" fill="${WF}"/>
+    <rect x="148" y="196" width="42" height="3" rx="1.5" fill="#f0506e"/>`),
+
+  // wgpu-shader-explorer — WGSL source → live-rendered fragment tile
+  'wgpu-shader-explorer': (s) => mk(s, `
+    <g ${MONO} font-size="10" fill="${WM}"><text x="40" y="90">fn fs(uv) {</text><text x="54" y="110">return</text><text x="54" y="130">vec4(uv,1);</text><text x="40" y="150">}</text></g>
+    <g stroke="${A}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow-${s})"><path d="M166 119 H204 M194 109 L204 119 L194 129"/></g>
+    <rect x="222" y="64" width="130" height="112" rx="8" fill="url(#frag-${s})" filter="url(#glow-${s})"/>
+    <rect x="222" y="64" width="130" height="112" rx="8" fill="none" stroke="rgba(255,255,255,0.18)"/>
+    <text x="224" y="192" fill="${WM}" ${MONO} font-size="9">naga · live</text>`,
+    `<linearGradient id="frag-${s}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${A}"/><stop offset="0.5" stop-color="#3b82f6"/><stop offset="1" stop-color="#7c3aed"/></linearGradient>`),
+
+  // dianalang — declarative skill source guarded by a shield (safety as syntax)
+  dianalang: (s) => mk(s, `
+    <g ${MONO} font-size="11" fill="${WM}"><text x="40" y="86">skill volume {</text><text x="56" y="108">gate trusted</text><text x="56" y="130">exec wpctl</text><text x="40" y="152">}</text></g>
+    <path d="M300 56 L348 73 V117 q0 38 -48 58 q-48 -20 -48 -58 V73 Z" fill="${A}" fill-opacity="0.09" stroke="${A}" stroke-width="2" filter="url(#glow-${s})"/>
+    <path d="M280 116 l13 13 l24 -28" fill="none" stroke="${A}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`),
+
+  // chat-agent-template — chat bubbles wired to a column of tool nodes
+  'chat-agent-template': (s) => mk(s, `
+    <g fill="none" stroke="${WL}" stroke-width="1.4"><rect x="40" y="60" width="158" height="36" rx="12"/></g>
+    <text x="54" y="82" fill="${WM}" ${MONO} font-size="10">search("…")</text>
+    <g filter="url(#glow-${s})"><rect x="40" y="128" width="176" height="36" rx="12" fill="none" stroke="${A}" stroke-width="1.4"/></g>
+    <text x="54" y="150" fill="${A}" ${MONO} font-size="10">▸ streaming</text>
+    <g fill="${A}"><circle cx="180" cy="146" r="2"/><circle cx="190" cy="146" r="2"/><circle cx="200" cy="146" r="2"/></g>
+    <g stroke="${WL}" stroke-dasharray="2 3" fill="none"><path d="M216 146 C 252 146 264 74 299 74"/><path d="M216 146 C 252 146 264 120 299 120"/><path d="M216 146 C 252 146 264 166 299 166"/></g>
+    <g stroke="${WL}" fill="#0b0f14"><circle cx="312" cy="74" r="13"/><circle cx="312" cy="120" r="13"/><circle cx="312" cy="166" r="13"/></g>
+    <g stroke="${A}" stroke-width="1.6" fill="none"><circle cx="310" cy="72" r="4"/><path d="M313 75 l4 4"/></g>
+    <g stroke="${A}" stroke-width="1.6" fill="none"><path d="M307 114 l-5 6 l5 6 M317 114 l5 6 l-5 6"/></g>
+    <g stroke="${A}" stroke-width="1.5" fill="none"><ellipse cx="312" cy="160" rx="7" ry="3"/><path d="M305 160 v6 q7 3 14 0 v-6"/></g>`),
+
+  // smart-campus-api — sensored building feeding REST endpoints
+  'smart-campus-api': (s) => mk(s, `
+    <g fill="none" stroke="${WL}" stroke-width="1.5"><rect x="48" y="80" width="92" height="108" rx="3"/></g>
+    <g fill="${WF}"><rect x="60" y="92" width="14" height="14"/><rect x="84" y="92" width="14" height="14"/><rect x="108" y="92" width="14" height="14"/><rect x="60" y="116" width="14" height="14"/><rect x="84" y="116" width="14" height="14"/><rect x="108" y="116" width="14" height="14"/><rect x="60" y="140" width="14" height="14"/><rect x="84" y="140" width="14" height="14"/><rect x="108" y="140" width="14" height="14"/></g>
+    <circle cx="94" cy="68" r="11" fill="none" stroke="${A}" stroke-opacity="0.4"/><circle cx="94" cy="68" r="5" fill="${A}" filter="url(#glow-${s})"/>
+    <path d="M148 120 H198" stroke="${A}" stroke-width="2" fill="none" stroke-linecap="round" filter="url(#glow-${s})"/>
+    <g ${MONO} font-size="10">
+      <rect x="206" y="84" width="152" height="22" rx="5" fill="${WF}"/><text x="216" y="99" fill="${A}">GET</text><text x="248" y="99" fill="${WM}">/rooms</text>
+      <rect x="206" y="110" width="152" height="22" rx="5" fill="${WF}"/><text x="216" y="125" fill="${A}">GET</text><text x="248" y="125" fill="${WM}">/sensors</text>
+      <rect x="206" y="136" width="152" height="22" rx="5" fill="${WF}"/><text x="216" y="151" fill="${L}">POST</text><text x="252" y="151" fill="${WM}">/readings</text>
     </g>`),
 
-  // battery + cpu chip, minimal
-  sam: (s) => mk(s, `
-    <g fill="none" stroke="${WL}" stroke-width="2"><rect x="120" y="92" width="120" height="56" rx="8"/><rect x="240" y="108" width="10" height="24" rx="3" fill="${WL}"/></g>
-    <rect x="128" y="100" width="62" height="40" rx="4" fill="${A}" filter="url(#glow-${s})"/>
-    <path d="M150 104 L138 124 H150 L146 138 L162 116 H150 Z" fill="#04110f"/>
-    <g fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"><rect x="168" y="176" width="64" height="40" rx="4"/>
-      <path d="M176 176 v-8 M192 176 v-8 M208 176 v-8 M224 176 v-8 M176 216 v8 M192 216 v8 M208 216 v8 M224 216 v8"/></g>
-    <text x="200" y="200" fill="rgba(255,255,255,0.6)" ${MONO} font-size="10" text-anchor="middle">CPU</text>`),
-
-  // terminal window with play glyph
-  'donghua-cli': (s) => mk(s, `
-    <g fill="none" stroke="${WL}"><rect x="60" y="52" width="280" height="136" rx="8"/></g>
-    <line x1="60" y1="76" x2="340" y2="76" stroke="${WL}"/>
-    <g fill="rgba(255,255,255,0.3)"><circle cx="76" cy="64" r="4"/><circle cx="90" cy="64" r="4"/><circle cx="104" cy="64" r="4"/></g>
-    <text x="76" y="104" fill="rgba(255,255,255,0.55)" ${MONO} font-size="11">$ dhua "BTTH s5"</text>
-    <text x="76" y="124" fill="${A}" ${MONO} font-size="11">▸ resolving · 1080p</text>
-    <path d="M250 134 L290 156 L250 178 Z" fill="${A}" filter="url(#glow-${s})"/>`),
-
-  // folder -> phone (apk)
-  vn2apk: (s) => mk(s, `
-    <g fill="none" stroke="${WL}" stroke-width="2"><path d="M56 92 h40 l10 12 h48 a6 6 0 0 1 6 6 v50 a6 6 0 0 1 -6 6 H56 a6 6 0 0 1 -6 -6 V98 a6 6 0 0 1 6 -6 Z"/></g>
-    <g filter="url(#glow-${s})" stroke="${A}" stroke-width="2.5" fill="none" stroke-linecap="round"><path d="M180 120 H236 M222 106 L236 120 L222 134"/></g>
-    <g fill="none" stroke="${A}" stroke-width="2"><rect x="270" y="78" width="76" height="120" rx="12" filter="url(#glow-${s})"/></g>
-    <rect x="298" y="86" width="20" height="4" rx="2" fill="${A}"/>
-    <text x="308" y="148" fill="${A}" ${MONO} font-size="12" font-weight="700" text-anchor="middle">APK</text>
-    <circle cx="308" cy="184" r="5" fill="none" stroke="${A}" stroke-width="2"/>`),
-
-  // cctv grid with bounding box
-  crow: (s) => mk(s, `
-    <g fill="none" stroke="${WL}"><rect x="48" y="50" width="138" height="64" rx="4"/><rect x="200" y="50" width="138" height="64" rx="4"/><rect x="48" y="126" width="138" height="64" rx="4"/><rect x="200" y="126" width="138" height="64" rx="4"/></g>
-    <g fill="rgba(255,255,255,0.25)"><circle cx="117" cy="82" r="9"/><path d="M104 114 a13 13 0 0 1 26 0 Z"/></g>
-    <rect x="232" y="62" width="40" height="42" rx="3" fill="none" stroke="${A}" stroke-width="2" filter="url(#glow-${s})"/>
-    <text x="232" y="58" fill="${A}" ${MONO} font-size="9">0.98</text>
-    <circle cx="300" cy="158" r="14" fill="none" stroke="${A}" stroke-width="2"/><circle cx="300" cy="158" r="4" fill="${A}" filter="url(#glow-${s})"/>
-    <text x="56" y="180" fill="rgba(255,255,255,0.45)" ${MONO} font-size="10">REC ●</text>`),
-
-  // cache layers + arch translation
-  warmcore: (s) => mk(s, `
-    <g ${MONO} font-size="10" fill="rgba(255,255,255,0.5)"><text x="52" y="64">x86</text><text x="316" y="64">arm64</text></g>
-    <g fill="none" stroke="${WL}"><rect x="48" y="74" width="70" height="22" rx="3"/><rect x="48" y="102" width="70" height="22" rx="3"/><rect x="48" y="130" width="70" height="22" rx="3"/></g>
-    <g ${MONO} font-size="9" fill="rgba(255,255,255,0.4)"><text x="56" y="89">L1</text><text x="56" y="117">L2</text><text x="56" y="145">L3</text></g>
-    <g filter="url(#glow-${s})" stroke="${A}" stroke-width="2.5" fill="none" stroke-linecap="round"><path d="M170 120 H250 M236 106 L250 120 L236 134"/></g>
-    <circle cx="200" cy="120" r="16" fill="none" stroke="${A}" stroke-width="2"/><text x="200" y="124" fill="${A}" ${MONO} font-size="9" text-anchor="middle">PGO</text>
-    <g fill="none" stroke="rgba(255,255,255,0.5)"><rect x="304" y="88" width="56" height="64" rx="4"/></g>
-    <text x="56" y="186" fill="rgba(255,255,255,0.4)" ${MONO} font-size="10">zero hot-path inference</text>`),
-
-  // wireframe cube
-  'vulkan-renderer': (s) => mk(s, `
-    <g stroke="${WL}" fill="none" stroke-width="1.5"><path d="M150 60 L250 60 L250 160 L150 160 Z"/><path d="M190 100 L290 100 L290 200 L190 200 Z"/><path d="M150 60 L190 100 M250 60 L290 100 M250 160 L290 200 M150 160 L190 200"/></g>
-    <g stroke="${A}" stroke-width="1.5" fill="none" filter="url(#glow-${s})"><path d="M190 100 L290 100 L290 200 L190 200 Z"/></g>
-    <g fill="${A}"><circle cx="150" cy="60" r="3"/><circle cx="250" cy="60" r="3"/><circle cx="250" cy="160" r="3"/><circle cx="150" cy="160" r="3"/><circle cx="190" cy="100" r="3"/><circle cx="290" cy="100" r="3"/><circle cx="290" cy="200" r="3"/><circle cx="190" cy="200" r="3"/></g>
-    <text x="150" y="44" fill="rgba(255,255,255,0.4)" ${MONO} font-size="10">VkPipeline</text>`),
-
-  // shader code + gradient fragment output
-  'wgpu-shader-explorer': (s) => mk(s, `
-    <g ${MONO} font-size="10" fill="rgba(255,255,255,0.45)"><text x="48" y="74">@fragment</text><text x="48" y="92">fn fs() -&gt;</text><text x="60" y="110">vec4&lt;f32&gt;</text><text x="48" y="128">{ uv.xyx }</text></g>
-    <g filter="url(#glow-${s})" stroke="${A}" stroke-width="2" fill="none" stroke-linecap="round"><path d="M176 100 H214 M202 88 L214 100 L202 112"/></g>
-    <rect x="230" y="62" width="120" height="116" rx="6" fill="url(#frag-${s})" filter="url(#glow-${s})"/>
-    <text x="230" y="196" fill="rgba(255,255,255,0.4)" ${MONO} font-size="10">naga · live</text>`,
-    `<linearGradient id="frag-${s}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${A}"/><stop offset="0.5" stop-color="#2563eb"/><stop offset="1" stop-color="#7c3aed"/></linearGradient>`),
-
-  // code + safety shield (compile gate)
-  dianalang: (s) => mk(s, `
-    <g ${MONO} font-size="11" fill="rgba(255,255,255,0.45)"><text x="48" y="70">skill volume {</text><text x="64" y="90">gate: trusted</text><text x="64" y="110">exec wpctl …</text><text x="48" y="130">}</text></g>
-    <path d="M300 60 L348 76 V120 q0 36 -48 56 q-48 -20 -48 -56 V76 Z" fill="none" stroke="${A}" stroke-width="2.5" filter="url(#glow-${s})"/>
-    <path d="M280 118 l14 14 l26 -30" fill="none" stroke="${A}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="48" y="170" fill="${A}" ${MONO} font-size="10">✓ compiles — injection-proof</text>`),
-
-  // chat bubbles + tool nodes
-  'chat-agent-template': (s) => mk(s, `
-    <g fill="none" stroke="${WL}" stroke-width="1.5"><rect x="48" y="66" width="150" height="38" rx="10"/><path d="M62 104 l0 14 l16 -14"/></g>
-    <text x="62" y="89" fill="rgba(255,255,255,0.5)" ${MONO} font-size="10">tool: search(…)</text>
-    <g filter="url(#glow-${s})"><rect x="48" y="132" width="180" height="38" rx="10" fill="none" stroke="${A}" stroke-width="1.5"/></g>
-    <text x="62" y="155" fill="${A}" ${MONO} font-size="10">▸ streaming…</text>
-    <g stroke="${WL}" fill="none"><path d="M280 70 v100"/><circle cx="280" cy="70" r="10" fill="#0b0c10"/><circle cx="280" cy="120" r="10" fill="#0b0c10"/><circle cx="280" cy="170" r="10" fill="#0b0c10"/></g>
-    <g fill="${A}"><circle cx="280" cy="70" r="4"/><circle cx="280" cy="120" r="4"/><circle cx="280" cy="170" r="4"/></g>
-    <g stroke="${A}" stroke-dasharray="2 3" fill="none"><path d="M228 151 H270"/></g>`),
-
-  // building + sensors + REST endpoints
-  'smart-campus-api': (s) => mk(s, `
-    <g fill="none" stroke="${WL}" stroke-width="1.5"><rect x="56" y="84" width="96" height="104" rx="3"/><path d="M70 100 h16 M70 116 h16 M70 132 h16 M70 148 h16 M104 100 h16 M104 116 h16 M104 132 h16 M104 148 h16"/></g>
-    <circle cx="104" cy="72" r="6" fill="none" stroke="${A}" stroke-width="2"/><circle cx="104" cy="72" r="2" fill="${A}" filter="url(#glow-${s})"/>
-    <g filter="url(#glow-${s})" stroke="${A}" stroke-width="2" fill="none" stroke-linecap="round"><path d="M170 120 H210"/></g>
-    <g ${MONO} font-size="10"><rect x="218" y="80" width="128" height="22" rx="4" fill="rgba(255,255,255,0.05)"/><text x="226" y="95" fill="${A}">GET</text><text x="252" y="95" fill="rgba(255,255,255,0.55)">/rooms</text>
-      <rect x="218" y="110" width="128" height="22" rx="4" fill="rgba(255,255,255,0.05)"/><text x="226" y="125" fill="${A}">GET</text><text x="252" y="125" fill="rgba(255,255,255,0.55)">/sensors</text>
-      <rect x="218" y="140" width="128" height="22" rx="4" fill="rgba(255,255,255,0.05)"/><text x="226" y="155" fill="${A}">POST</text><text x="256" y="155" fill="rgba(255,255,255,0.55)">/readings</text></g>`),
-
-  // network sockets + quiz tick
+  // neti — socket graph with a glowing hub and a quiz tick
   neti: (s) => mk(s, `
-    <g stroke="${WL}" fill="none" stroke-width="1.5"><path d="M80 80 L200 130 L80 180 M200 130 L320 90 M200 130 L320 170"/></g>
-    <g fill="rgba(255,255,255,0.5)"><circle cx="80" cy="80" r="6"/><circle cx="80" cy="180" r="6"/><circle cx="320" cy="90" r="6"/><circle cx="320" cy="170" r="6"/></g>
-    <circle cx="200" cy="130" r="11" fill="${A}" filter="url(#glow-${s})"/>
-    <rect x="252" y="118" width="14" height="14" rx="2" fill="none" stroke="${A}"/><path d="M255 125 l3 3 l6 -7" stroke="${A}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="64" y="214" fill="rgba(255,255,255,0.4)" ${MONO} font-size="10">socket · quiz · speed-round</text>`),
+    <g stroke="${WL}" fill="none" stroke-width="1.4"><path d="M70 80 L186 120 L70 162 M186 120 L322 86 M186 120 L322 156"/></g>
+    <g fill="${WM}"><circle cx="70" cy="80" r="5"/><circle cx="70" cy="162" r="5"/><circle cx="322" cy="86" r="5"/><circle cx="322" cy="156" r="5"/></g>
+    <circle cx="186" cy="120" r="20" fill="none" stroke="${A}" stroke-opacity="0.35"/>
+    <circle cx="186" cy="120" r="12" fill="${A}" filter="url(#glow-${s})"/>
+    <g fill="${A}"><circle cx="128" cy="100" r="2.5"/><circle cx="256" cy="102" r="2.5"/></g>
+    <g transform="translate(256,168)"><circle r="13" fill="#0b0f14" stroke="${A}" stroke-width="1.5"/><path d="M-5 0 l4 4 l7 -8" stroke="${A}" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>`),
 };
 
 export function getHero(slug: string): string | null {
