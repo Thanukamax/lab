@@ -1,8 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Nav from '../../components/Nav.astro';
-import Footer from '../../components/Footer.astro';
+import Box from '../../components/Box.astro';
+import Aside from '../../components/Aside.astro';
 import { getThumb } from '../../utils/thumbs';
 import { getHero } from '../../utils/heroes';
 import { withBase } from '../../utils/url';
@@ -15,41 +15,39 @@ const topics = ['All', ...Array.from(new Set(projects.map((p) => p.data.topic)))
 ---
 
 <BaseLayout title="Work — Thanuka Perera" description="Backend, systems tooling, on-device AI, and graphics projects — some shipped, some measured until they fell apart.">
-  <Nav />
-  <main id="top" class="lq-content">
-    <header class="lq-intro">
-      <p class="lq-eyebrow">thanuka.lab · work</p>
-      <h1>Things I built — and a few I <em>measured</em> until they fell apart.</h1>
-      <p class="lq-intro-bio">Shipped tools, systems experiments, and research, solo unless noted. Some are live, some didn't survive the measuring. Each one's its own write-up.</p>
-    </header>
+  <div class="lq-scene-grid">
+    <div class="lq-main">
+      <Box title="projects/*.proj" id="projects">
+        <p class="lq-box-title">things i built — &amp; a few i measured</p>
+        <p class="lq-bio">shipped tools, systems experiments, and research, solo unless noted. some are live, some didn't survive the measuring. each one's its own write-up.</p>
 
-    <section class="lq-section lq-wide">
-      <div class="lq-pills" id="filterPills" style="margin-bottom:20px">
-        {topics.map((t, i) => (
-          <button class="lq-pill" type="button" aria-pressed={i === 0 ? 'true' : 'false'} data-f={t}>{t}</button>
-        ))}
-      </div>
+        <div class="lq-pills" id="filterPills" style="margin:12px 0 16px">
+          {topics.map((t, i) => (
+            <button class="lq-pill" type="button" aria-pressed={i === 0 ? 'true' : 'false'} data-f={t}>{t}</button>
+          ))}
+        </div>
 
-      <div class="lq-grid" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr))">
-        {projects.map((p) => { const v = verdict(p.data.status); return (
-          <a class="lq-glass lq-glass--interactive lq-card" href={withBase(`projects/${p.slug}`)} data-topic={p.data.topic}>
-            <div class="lq-card-art">
-              {p.data.heroImage ? <img src={p.data.heroImage} alt="" /> : <Fragment set:html={getHero(p.slug) ?? getThumb(p.data.topic)} />}
-              <span class={`lq-verdict lq-verdict--${v.kit}`}><span class="g">{v.glyph}</span>{v.label}</span>
-            </div>
-            <div class="lq-card-body">
-              <span class="lq-card-topic">{p.data.topic} · {p.data.year}</span>
-              <h3 class="lq-card-title">{p.data.title}</h3>
-              <p class="lq-card-summary">{p.data.summary}</p>
-              <div class="lq-stack">{p.data.stack.slice(0, 3).map((s) => <span class="lq-chip">{s}</span>)}</div>
-            </div>
-          </a>
-        ); })}
-      </div>
-    </section>
+        <div class="lq-grid" style="grid-template-columns:repeat(auto-fill,minmax(13.5rem,1fr))">
+          {projects.map((p) => { const v = verdict(p.data.status); return (
+            <a class="lq-glass lq-glass--interactive lq-card" href={withBase(`projects/${p.slug}`)} data-topic={p.data.topic}>
+              <div class="lq-card-art">
+                {p.data.heroImage ? <img src={p.data.heroImage} alt="" /> : <Fragment set:html={getHero(p.slug) ?? getThumb(p.data.topic)} />}
+                <span class={`lq-verdict lq-verdict--${v.kit}`}><span class="g">{v.glyph}</span>{v.label}</span>
+              </div>
+              <div class="lq-card-body">
+                <span class="lq-card-topic">{p.data.topic} · {p.data.year}</span>
+                <h3 class="lq-card-title">{p.data.title}</h3>
+                <p class="lq-card-summary">{p.data.summary}</p>
+                <div class="lq-stack">{p.data.stack.slice(0, 2).map((s) => <span class="lq-chip">{s}</span>)}</div>
+              </div>
+            </a>
+          ); })}
+        </div>
+      </Box>
+    </div>
 
-    <Footer />
-  </main>
+    <Aside />
+  </div>
 </BaseLayout>
 
 <script is:inline>

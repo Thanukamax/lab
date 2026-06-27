@@ -1,0 +1,50 @@
+---
+// The living-site sidebar ("the tsatskes"): webmaster, currently.php, live
+// stats, streaming commit log, 88x31 buttons, webring. All the data-cx hooks
+// are driven by conscious.js (booted once in BaseLayout).
+import Box from './Box.astro';
+---
+<aside class="lq-aside" id="misc">
+  <Box title="the_webmaster">
+    <div class="lq-avatar"></div>
+    <p class="lq-bio"><b>@thanuka</b> — online <b data-cx="online">4</b> now. CS undergrad in Colombo, building on water. systems · graphics · small local models.</p>
+  </Box>
+
+  <Box title="currently.php">
+    <ul class="lq-currently">
+      <li><span class="k">building</span><span class="v" data-cx="cur-building">warmcore</span></li>
+      <li><span class="k">hearing</span><span class="v" data-cx="cur-listening">boards of canada</span></li>
+      <li><span class="k">feeling</span><span class="v" data-cx="cur-feeling">caffeinated</span></li>
+      <li><span class="k">coffee</span><span class="v" data-cx="cur-coffee">cup #3</span></li>
+    </ul>
+  </Box>
+
+  <Box title="site_stats">
+    <div style="text-align:center;margin-bottom:10px">
+      <div class="lq-pix" style="font-size:9px;color:var(--muted);margin-bottom:6px;letter-spacing:.1em">— YOU ARE VISITOR —</div>
+      <span class="lq-counter" data-cx="hits"></span>
+    </div>
+    <div class="lq-statline"><span>online now</span><b data-cx="online">4</b></div>
+    <div class="lq-statline"><span>uptime</span><b data-cx="uptime">…</b></div>
+    <div class="lq-statline"><span>last commit</span><b data-cx="updated">…</b></div>
+    <div class="lq-statline"><span>commits</span><b data-cx="commit-count">1,247</b></div>
+    <div class="lq-statline"><span>projects</span><b data-cx="projects">14</b></div>
+  </Box>
+
+  <Box title="git --live">
+    <ul class="lq-commitlog" data-cx="commit-log"></ul>
+  </Box>
+
+  <Box title="88x31.gif" id="links">
+    <div class="lq-88grid">
+      <a class="lq-88 lq-88--a" href="https://github.com/Thanukamax">made with<br>A PULSE</a>
+      <a class="lq-88 lq-88--l" href="#top">powered by<br>WATER</a>
+      <a class="lq-88 lq-88--am" href="#top">best viewed<br>1024×768</a>
+      <a class="lq-88 lq-88--blu" href="#top">no AI<br>SLOP HERE</a>
+    </div>
+  </Box>
+
+  <Box title="the_deep_webring" id="gbook">
+    <div class="lq-webring"><a href="#top">‹ prev</a><a href="#top">[ ring ]</a><a href="#top">next ›</a></div>
+  </Box>
+</aside>

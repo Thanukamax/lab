@@ -1,8 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Nav from '../components/Nav.astro';
-import Footer from '../components/Footer.astro';
+import Box from '../components/Box.astro';
+import Aside from '../components/Aside.astro';
 import { getThumb } from '../utils/thumbs';
 import { getHero } from '../utils/heroes';
 import { withBase, fmtDate } from '../utils/url';
@@ -22,74 +22,67 @@ const arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 ---
 
 <BaseLayout>
-  <Nav />
-  <main id="top" class="lq-content">
-    <header class="lq-intro">
-      <p class="lq-eyebrow">thanuka.lab · field notes</p>
-      <h1>I build systems, then measure them until they tell me the <em>truth</em>.</h1>
-      <p class="lq-intro-bio">
-        Backends, systems tools, and AI that runs on your own machine — then write up what broke
-        and what held. Sometimes the idea works; sometimes I measure it, it falls apart, and that
-        one gets written up too. The negative results count.
-      </p>
-      <p class="lq-intro-meta">
-        <b>{posts.length}</b> field notes&nbsp;&nbsp;·&nbsp;&nbsp;<b>{projects.length}</b> projects
-        &nbsp;&nbsp;·&nbsp;&nbsp;<a href="https://github.com/Thanukamax">github</a>
-        &nbsp;&nbsp;·&nbsp;&nbsp;<a href={withBase('feed.xml')}>rss</a>
-      </p>
-    </header>
+  <div class="lq-scene-grid">
+    <div class="lq-main">
 
-    {lead && (
-      <section class="lq-section lq-wide">
-        <div class="lq-sechead"><h2><span class="lq-drop"></span>Latest</h2><a href={withBase('writing')}>All writing</a></div>
-        <a class="lq-glass lq-glass--interactive lq-feature" href={withBase(`writing/${lead.slug}`)}>
-          <div class="lq-feature-art"><span class="lq-verdict lq-verdict--shipped"><span class="g">●</span>New</span></div>
-          <div class="lq-feature-body">
-            <span class="lq-feature-topic">{lead.data.topic} · {fmtDate(lead.data.date)}</span>
-            <h3>{lead.data.title}</h3>
-            <p class="lq-feature-dek">{lead.data.description}</p>
-            <div class="lq-feature-meta"><span>{lead.data.readTime} read</span><span class="go">Read note <Fragment set:html={arrow} /></span></div>
-          </div>
-        </a>
-      </section>
-    )}
+      <Box title="welcome.html" id="home">
+        <p class="lq-box-title">hi, i'm thanuka <span class="lq-blink">NEW!</span></p>
+        <p class="lq-bio">dev · CS undergrad · Colombo, Sri Lanka — building systems, graphics &amp; small local models, then writing about what broke and what held. this is the log. it's rendered on a little water, and it's a bit alive: the counters tick, the commits stream, the status changes while you read.</p>
+        <div class="lq-rule"></div>
+        <p class="lq-bio">drag your cursor anywhere — the background is a real GPU fluid. tap to drop. <b>welcome aboard.</b></p>
+      </Box>
 
-    {rest.length > 0 && (
-      <section class="lq-section lq-wide">
-        <div class="lq-sechead"><h2><span class="lq-drop"></span>Writing</h2><a href={withBase('writing')}>All notes →</a></div>
-        <div class="lq-glass lq-posts" style="padding:4px 14px">
-          {rest.map((post) => (
-            <a class="lq-postrow" href={withBase(`writing/${post.slug}`)}>
-              <span class="lq-postrow-topic">{post.data.topic}</span>
-              <h3 class="lq-postrow-h">{post.data.title}</h3>
-              <p class="lq-postrow-desc">{post.data.description}</p>
-              <span class="lq-postrow-meta">{fmtDate(post.data.date)}<span class="read">{post.data.readTime}</span></span>
-            </a>
-          ))}
-        </div>
-      </section>
-    )}
-
-    <section class="lq-section lq-wide">
-      <div class="lq-sechead"><h2><span class="lq-drop"></span>Selected work</h2><a href={withBase('projects')}>All {projects.length} →</a></div>
-      <div class="lq-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
-        {featured.map((p) => { const v = verdict(p.data.status); return (
-          <a class="lq-glass lq-glass--interactive lq-card" href={withBase(`projects/${p.slug}`)}>
-            <div class="lq-card-art">
-              {p.data.heroImage ? <img src={p.data.heroImage} alt="" /> : <Fragment set:html={getHero(p.slug) ?? getThumb(p.data.topic)} />}
-              <span class={`lq-verdict lq-verdict--${v.kit}`}><span class="g">{v.glyph}</span>{v.label}</span>
-            </div>
-            <div class="lq-card-body">
-              <span class="lq-card-topic">{p.data.topic}</span>
-              <h3 class="lq-card-title">{p.data.title}</h3>
-              <p class="lq-card-summary">{p.data.summary}</p>
-              <div class="lq-stack">{p.data.stack.slice(0, 3).map((s) => <span class="lq-chip">{s}</span>)}</div>
+      {lead && (
+        <Box title="latest_entry.log">
+          <a class="lq-feature" href={withBase(`writing/${lead.slug}`)} style="display:grid">
+            <div class="lq-feature-art" style="border-radius:8px"><span class="lq-verdict lq-verdict--shipped"><span class="g">●</span>New</span></div>
+            <div class="lq-feature-body" style="padding:18px 4px 4px">
+              <span class="lq-feature-topic">{lead.data.topic} · {fmtDate(lead.data.date)}</span>
+              <h3>{lead.data.title}</h3>
+              <p class="lq-feature-dek">{lead.data.description}</p>
+              <div class="lq-feature-meta"><span>{lead.data.readTime} read</span><span class="go">Read note <Fragment set:html={arrow} /></span></div>
             </div>
           </a>
-        ); })}
-      </div>
-    </section>
+        </Box>
+      )}
 
-    <Footer />
-  </main>
+      {rest.length > 0 && (
+        <Box title="blog/" id="blog" bodyStyle="padding:2px 13px">
+          <div class="lq-posts">
+            {rest.map((post) => (
+              <a class="lq-postrow" href={withBase(`writing/${post.slug}`)}>
+                <span class="lq-postrow-topic">{post.data.topic}</span>
+                <h3 class="lq-postrow-h">{post.data.title}</h3>
+                <p class="lq-postrow-desc">{post.data.description}</p>
+                <span class="lq-postrow-meta">{fmtDate(post.data.date)}<span class="read">{post.data.readTime}</span></span>
+              </a>
+            ))}
+          </div>
+        </Box>
+      )}
+
+      <Box title="projects/*.proj" id="projects">
+        <div class="lq-grid" style="grid-template-columns:repeat(auto-fill,minmax(13.5rem,1fr))">
+          {featured.map((p) => { const v = verdict(p.data.status); return (
+            <a class="lq-glass lq-glass--interactive lq-card" href={withBase(`projects/${p.slug}`)}>
+              <div class="lq-card-art">
+                {p.data.heroImage ? <img src={p.data.heroImage} alt="" /> : <Fragment set:html={getHero(p.slug) ?? getThumb(p.data.topic)} />}
+                <span class={`lq-verdict lq-verdict--${v.kit}`}><span class="g">{v.glyph}</span>{v.label}</span>
+              </div>
+              <div class="lq-card-body">
+                <span class="lq-card-topic">{p.data.topic}</span>
+                <h3 class="lq-card-title">{p.data.title}</h3>
+                <p class="lq-card-summary">{p.data.summary}</p>
+                <div class="lq-stack">{p.data.stack.slice(0, 2).map((s) => <span class="lq-chip">{s}</span>)}</div>
+              </div>
+            </a>
+          ); })}
+        </div>
+        <p style="text-align:center;margin:14px 0 2px"><a class="lq-pix" href={withBase('projects')} style="font-size:10px;color:var(--aqua);letter-spacing:.08em;text-decoration:none">VIEW ALL {projects.length} PROJECTS →</a></p>
+      </Box>
+
+    </div>
+
+    <Aside />
+  </div>
 </BaseLayout>

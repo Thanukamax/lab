@@ -1,0 +1,15 @@
+---
+interface Props {
+  title: string;
+  id?: string;
+  bodyClass?: string;
+  bodyStyle?: string;
+}
+const { title, id, bodyClass = '', bodyStyle = '' } = Astro.props;
+---
+<section class="lq-glass lq-box" id={id}>
+  <div class="lq-box-bar"><span class="dot"></span> {title} <span class="x">×</span></div>
+  <div class={`lq-box-body ${bodyClass}`.trim()} style={bodyStyle}>
+    <slot />
+  </div>
+</section>

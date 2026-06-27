@@ -7,26 +7,17 @@ const isActive = (p: string) => {
 };
 ---
 
-<nav class="lq-nav">
-  <div class="lq-nav-inner lq-glass">
-    <a class="lq-brand" href={withBase('')}><span class="lq-drop"></span>thanuka<span style="color:var(--aqua)">.</span>lab</a>
-    <div class="lq-nav-links">
-      <a href={withBase('writing')} aria-current={isActive('writing') ? 'page' : undefined}>Writing</a>
-      <a href={withBase('projects')} aria-current={isActive('projects') ? 'page' : undefined}>Work</a>
-      <a href={withBase('about')} aria-current={isActive('about') ? 'page' : undefined}>About</a>
+<nav class="lq-glass lq-navbar">
+  <a href={withBase('')} aria-current={isActive('') ? 'page' : undefined}>home</a>
+  <a href={withBase('about')} aria-current={isActive('about') ? 'page' : undefined}>about.me</a>
+  <a href={withBase('writing')} aria-current={isActive('writing') ? 'page' : undefined}>blog</a>
+  <a href={withBase('projects')} aria-current={isActive('projects') ? 'page' : undefined}>projects</a>
+  <a href={withBase('feed.xml')}>rss</a>
+  <span class="lq-navtools">
+    <div class="lq-seg" id="uiSeg" role="group" aria-label="Interface style">
+      <button data-ui="glass" type="button" aria-pressed="true">Steel</button>
+      <button data-ui="android" type="button" aria-pressed="false">Material</button>
     </div>
-    <div class="lq-nav-tools">
-      <div class="lq-seg" id="uiSeg" role="group" aria-label="Interface style">
-        <button data-ui="glass" type="button" aria-pressed="true">Glass</button>
-        <button data-ui="android" type="button" aria-pressed="false">Material</button>
-      </div>
-      <button id="micToggle" class="lq-iconbtn off" type="button" aria-label="Blow on the water (microphone)" title="Blow on the water (mic)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
-      </button>
-      <button id="soundToggle" class="lq-iconbtn off" type="button" aria-label="Toggle water-drop sounds" title="Water-drop sounds">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-3 4.5-5 7.5-5 10a5 5 0 0 0 10 0c0-2.5-2-5.5-5-10z"/></svg>
-      </button>
-      <button id="themeToggle" class="lq-iconbtn" type="button" aria-label="Toggle dark / light"></button>
-    </div>
-  </div>
+    <button id="themeToggle" class="lq-iconbtn" type="button" aria-label="Toggle dark / light"></button>
+  </span>
 </nav>

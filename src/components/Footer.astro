@@ -1,12 +1,7 @@
 ---
-import { withBase } from '../utils/url';
 const year = new Date().getFullYear();
 ---
-<footer class="lq-footer lq-wide">
-  <span>© {year} Thanuka Sehasna Perera — built on water</span>
-  <span style="display:flex; gap:18px">
-    <a href="https://github.com/Thanukamax">GitHub</a>
-    <a href={withBase('feed.xml')}>RSS</a>
-    <a href="#top">Top ↑</a>
-  </span>
+<footer class="lq-retro-footer">
+  <span>© 2003–{year} <b>thanuka.lab</b> — built on water · layout v17</span>
+  <span>last updated <b data-cx="updated">…</b> · <b data-cx="online">4</b> souls aboard · <a href="#top">top ↑</a></span>
 </footer>

@@ -1,6 +1,8 @@
 ---
 import '../liquid-kit/liquid.css';
 import '../styles/site.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
 import { withBase } from '../utils/url';
 
 interface Props {
@@ -13,6 +15,7 @@ const {
 } = Astro.props;
 const feed = withBase('feed.xml');
 const favicon = withBase('favicon.svg');
+const banner = withBase('hero-banner.png');
 ---
 
 <!doctype html>
@@ -31,7 +34,7 @@ const favicon = withBase('favicon.svg');
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Silkscreen:wght@400;700&family=VT323&display=swap"
       rel="stylesheet"
     />
     <script is:inline>
@@ -49,8 +52,21 @@ const favicon = withBase('favicon.svg');
     <canvas id="bg" class="lq-bg"></canvas>
     <div id="staticBg" class="lq-bg-static" aria-hidden="true"></div>
     <div class="lq-scrim" aria-hidden="true"></div>
+    <div class="lq-grain" aria-hidden="true"></div>
 
-    <slot />
+    <div class="lq-scene" id="top">
+      <div class="lq-banner-wrap"><img src={banner} alt="thanuka.lab — a personal site on water" /></div>
+
+      <Nav />
+
+      <div class="lq-glass lq-marquee" aria-label="site ticker">
+        <span><span class="star">★</span> welcome to thanuka.lab — you are visitor no. <b id="mq-hits">…</b> &nbsp;·&nbsp; now building <i>warmcore</i> &nbsp;·&nbsp; the water remembers your cursor &nbsp;·&nbsp; measure before you build &nbsp;·&nbsp; sign my <i>guestbook</i> &nbsp;·&nbsp; best viewed with a pulse &nbsp;·&nbsp; <b>MAKE UI GREAT AGAIN</b> &nbsp;<span class="star">★</span></span>
+      </div>
+
+      <slot />
+
+      <Footer />
+    </div>
 
     <button class="lq-fab" id="fab" type="button" aria-label="Back to top">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
@@ -58,6 +74,7 @@ const favicon = withBase('favicon.svg');
 
     <script>
       import { LiquidFluid } from '../liquid-kit/fluid.js';
+      import { initConscious } from '../liquid-kit/conscious.js';
 
       const root = document.documentElement;
       const canvas = document.getElementById('bg');
@@ -81,7 +98,7 @@ const favicon = withBase('favicon.svg');
       themeBtn?.addEventListener('click', () => applyTheme(theme === 'dark' ? 'light' : 'dark'));
       applyTheme(theme);
 
-      // ---- UI mode: Glass (iOS-like) / Material (Android) ----
+      // ---- UI mode: Steel (glass) / Material (Android) ----
       const uiSeg = document.getElementById('uiSeg');
       let uiMode = (() => { try { return localStorage.getItem('liquid-ui') || 'glass'; } catch (_) { return 'glass'; } })();
       function applyUI(m) {
@@ -92,89 +109,41 @@ const favicon = withBase('favicon.svg');
       uiSeg?.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) applyUI(b.dataset.ui); });
       applyUI(uiMode);
 
-      // ---- water-drop sound (synth, opt-in) ----
-      let actx = null, soundOn = (() => { try { return localStorage.getItem('liquid-sound') === 'on'; } catch (_) { return false; } })();
-      const soundBtn = document.getElementById('soundToggle');
-      const paintSound = () => soundBtn?.classList.toggle('off', !soundOn);
-      paintSound();
-      const ensureCtx = () => { if (!actx) { const AC = window.AudioContext || window.webkitAudioContext; if (AC) actx = new AC(); } if (actx?.state === 'suspended') actx.resume(); return actx; };
-      function drop() {
-        if (!soundOn) return; const c = ensureCtx(); if (!c) return;
-        const t = c.currentTime, o = c.createOscillator(), g = c.createGain();
-        o.type = 'sine';
-        o.frequency.setValueAtTime(880, t);
-        o.frequency.exponentialRampToValueAtTime(210, t + 0.13);
-        g.gain.setValueAtTime(0.0001, t);
-        g.gain.exponentialRampToValueAtTime(0.3, t + 0.012);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.32);
-        o.connect(g).connect(c.destination); o.start(t); o.stop(t + 0.34);
-      }
-      soundBtn?.addEventListener('click', () => {
-        soundOn = !soundOn; paintSound();
-        try { localStorage.setItem('liquid-sound', soundOn ? 'on' : 'off'); } catch (_) {}
-        if (soundOn) { ensureCtx(); drop(); }
-      });
-
-      // ---- Mic: blow / talk into the mic and the water gusts (engine.blow) ----
-      const micBtn = document.getElementById('micToggle');
-      let micOn = false, micStream = null, micRAF = 0;
-      const paintMic = () => micBtn?.classList.toggle('off', !micOn);
-      async function startMic() {
-        const c = ensureCtx(); if (!c) return;
-        try {
-          micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false } });
-          const src = c.createMediaStreamSource(micStream);
-          const an = c.createAnalyser(); an.fftSize = 512; src.connect(an);
-          const data = new Uint8Array(an.fftSize);
-          const loop = () => {
-            an.getByteTimeDomainData(data);
-            let sum = 0; for (let i = 0; i < data.length; i++) { const v = (data[i] - 128) / 128; sum += v * v; }
-            const rms = Math.sqrt(sum / data.length);          // 0..~1
-            const level = Math.min(2, rms * 7);                // scale into blow() range
-            if (fluid.ok && level > 0.08) fluid.blow(level);   // ignore room noise floor
-            micRAF = requestAnimationFrame(loop);
-          };
-          loop(); micOn = true; paintMic();
-        } catch (_) { micOn = false; paintMic(); }             // denied / unavailable → stay off
-      }
-      function stopMic() {
-        if (micRAF) cancelAnimationFrame(micRAF); micRAF = 0;
-        micStream?.getTracks().forEach((t) => t.stop()); micStream = null;
-        micOn = false; paintMic();
-      }
-      micBtn?.addEventListener('click', () => { micOn ? stopMic() : startMic(); });
-      window.addEventListener('pagehide', stopMic);
-
-      // ---- RippleFX: a tap drops into the fluid (+ water ring + sound) ----
+      // ---- RippleFX: a tap drops into the fluid (+ Material ink ripple) ----
+      const RIPPLE_TARGETS = '.lq-gel, .lq-iconbtn, .lq-fab, .lq-pill, .lq-card, .lq-postrow, .lq-88, .lq-navbar a';
       window.addEventListener('pointerdown', (e) => {
         if (e.pointerType === 'mouse' && e.button !== 0) return;
         const r = document.createElement('div');
         r.className = 'lq-ripple'; r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px';
         document.body.appendChild(r); setTimeout(() => r.remove(), 660);
         if (fluid.ok) fluid.splatAt(e.clientX, e.clientY);
-        addMaterialRipple(e);
-        drop();
+        if (root.classList.contains('ui-android')) {
+          const el = e.target.closest(RIPPLE_TARGETS);
+          if (el) {
+            el.classList.add('md-ripple-host');
+            const rect = el.getBoundingClientRect(), d = Math.max(rect.width, rect.height);
+            const s = document.createElement('span'); s.className = 'md-ripple';
+            s.style.width = s.style.height = d + 'px';
+            s.style.left = (e.clientX - rect.left - d / 2) + 'px';
+            s.style.top = (e.clientY - rect.top - d / 2) + 'px';
+            el.appendChild(s); setTimeout(() => s.remove(), 560);
+          }
+        }
       }, { passive: true });
-
-      // ---- Material touch ripple (android mode only) ----
-      function addMaterialRipple(e) {
-        if (!root.classList.contains('ui-android')) return;
-        const el = e.target.closest('.lq-gel, .lq-iconbtn, .lq-fab, .lq-pill, .lq-work, .lq-card, .lq-postrow');
-        if (!el) return;
-        el.classList.add('md-ripple-host');
-        const rect = el.getBoundingClientRect(), d = Math.max(rect.width, rect.height);
-        const s = document.createElement('span'); s.className = 'md-ripple';
-        s.style.width = s.style.height = d + 'px';
-        s.style.left = (e.clientX - rect.left - d / 2) + 'px';
-        s.style.top = (e.clientY - rect.top - d / 2) + 'px';
-        el.appendChild(s); setTimeout(() => s.remove(), 560);
-      }
 
       // ---- FAB: back to top + a little splash ----
       document.getElementById('fab')?.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         if (fluid.ok) fluid.multipleSplats(5);
       });
+
+      // ---- ⚡ make the site conscious (hit counter, uptime, commit log, status) ----
+      initConscious({ launch: '2003-08-01T00:00:00' });
+      setTimeout(() => {
+        const h = document.querySelector('[data-cx="hits"]');
+        const mq = document.getElementById('mq-hits');
+        if (h && mq) mq.textContent = (h.textContent || '').replace(/^0+/, '') || h.textContent;
+      }, 60);
     </script>
   </body>
 </html>

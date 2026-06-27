@@ -1,61 +1,29 @@
 /* ============================================================================
-   Site-specific bridges layered on top of liquid-kit/liquid.css.
-   Only what the kit doesn't cover: real (SVG/image) project art, real meme
-   images as exhibits, the sound toggle, and project/about detail-page chrome.
+   Site bridges layered on top of liquid-kit/liquid.css.
+   Only what the kit doesn't cover: inline SVG project art filling the card /
+   banner frames, the detail-page hero frame, and real meme images as exhibits.
    ============================================================================ */
 html, body { margin: 0; }
 body { min-height: 100dvh; background: #04161a; overflow-x: hidden; }
 [data-theme='light'] body { background: #dff3f5; }
 
-/* real project art (inline SVG) fills the card / feature frame like an <img> */
-.lq-card-art > svg, .lq-feature-art > svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* inline SVG project art (heroes.ts) fills its frame like an <img> */
+.lq-card-art > svg, .lq-feature-art > svg, .lq-detail-art > svg { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-/* exhibits: real meme images framed as glass evidence (kit frames a placeholder div) */
-.lq-exhibit > img { width: 100%; display: block; border-radius: var(--r-card); border: 1px solid var(--glass-bd); box-shadow: var(--surface-sh); background: var(--glass-bg-2); }
+/* detail-page hero banner frame (project pages) */
+.lq-detail-art {
+  position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 8px;
+  border: 1px solid var(--glass-bd); box-shadow: var(--surface-sh);
+  background: var(--glass-bg-2); margin: 0 0 16px;
+}
+.lq-detail-art > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* exhibits: real images framed as evidence inside prose */
+.lq-exhibit > img { width: 100%; display: block; border-radius: 8px; border: 1px solid var(--glass-bd); box-shadow: var(--surface-sh); background: var(--glass-bg-2); }
 .lq-exhibit .fig { color: var(--lotus); text-transform: uppercase; letter-spacing: 0.08em; }
 
-/* sound toggle reads "off" when muted */
-.lq-iconbtn.off { opacity: 0.5; }
-
-/* detail-page chrome (project + about) the showcase didn't include */
-.lq-breadcrumb { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); margin: 0 0 16px; }
-.lq-breadcrumb a:hover { color: var(--aqua); }
-.lq-breadcrumb .sep { margin: 0 8px; opacity: 0.5; }
-.lq-specs { display: flex; flex-wrap: wrap; gap: 16px 30px; }
-.lq-specs .k { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 3px; }
-.lq-specs .v { color: var(--ink-strong); font-size: 0.92rem; }
-.lq-detaillinks { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
-.lq-detail-art { position: relative; aspect-ratio: 21 / 9; overflow: hidden; border-radius: var(--r-card); border: 1px solid var(--glass-bd); box-shadow: var(--surface-sh); margin: 22px 0; }
-.lq-detail-art > svg, .lq-detail-art > img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-/* ---- clear the fixed nav: pages that open straight into a section (about,
-   article/project detail) have no .lq-intro masthead to push content down, so
-   their first section would tuck under the floating nav. Listing pages start
-   with .lq-intro (which already has its own large top padding) and are unaffected. */
-.lq-content > .lq-section:first-child { padding-top: clamp(92px, 12vh, 124px); }
-
-/* ---- fill the page: stretch content into wide viewports, no dead side space ---- */
-.lq-section { max-width: min(1840px, 100%); padding-left: clamp(20px, 4vw, 72px); padding-right: clamp(20px, 4vw, 72px); }
-.lq-wide { max-width: 100%; }
-/* masthead spans the page but its text keeps a readable measure (left-aligned) */
-.lq-intro { max-width: 100%; }
-.lq-intro h1 { max-width: 20ch; }
-.lq-intro-bio { max-width: 64ch; }
-/* about keeps a measured single column */
-.lq-read { max-width: 860px; }
-.lq-read .lq-prose { max-width: none; }
-
-/* ---- document layout: reading pages fill the width via prose + sticky rail ---- */
-.lq-doc-section { max-width: min(1680px, 100%); }
-.lq-doc { display: grid; gap: clamp(22px, 2.6vw, 44px); align-items: start; }
-.lq-doc-main { min-width: 0; }
-.lq-doc-main > * + * { margin-top: 18px; }
-.lq-doc-aside { display: flex; flex-direction: column; gap: 16px; }
-.lq-doc-aside .lq-toc { margin: 0; }
-.lq-doc-aside .lq-specs { flex-direction: column; gap: 14px; }
-.lq-doc-aside .lq-detaillinks { margin-top: 0; }
-.lq-doc-aside .lq-aside-title { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 2px 0 -4px; }
-@media (min-width: 1000px) {
-  .lq-doc { grid-template-columns: minmax(0, 1fr) 300px; }
-  .lq-doc-aside { position: sticky; top: 92px; }
-}
+/* breadcrumb above an article title */
+.lq-crumb { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); margin: 0 0 12px; }
+.lq-crumb a { color: var(--muted); text-decoration: none; }
+.lq-crumb a:hover { color: var(--aqua); }
+.lq-crumb .sep { margin: 0 7px; opacity: 0.5; }

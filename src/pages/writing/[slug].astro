@@ -1,8 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Nav from '../../components/Nav.astro';
-import Footer from '../../components/Footer.astro';
+import Box from '../../components/Box.astro';
 import { withBase, fmtDate } from '../../utils/url';
 
 export async function getStaticPaths() {
@@ -23,62 +22,42 @@ const toc = headings.filter((h) => h.depth === 2);
 ---
 
 <BaseLayout title={`${d.title} — Thanuka Perera`} description={d.description}>
-  <Nav />
-  <main id="top" class="lq-content">
-    <article class="lq-section lq-doc-section">
-      <nav class="lq-breadcrumb">
-        <a href={withBase('writing')}>Writing</a><span class="sep">/</span><span>{d.topic}</span>
-      </nav>
+  <div class="lq-article-cols">
+    <div class="lq-article-main">
+      <Box title={`${post.slug}.md`}>
+        <p class="lq-crumb"><a href={withBase('writing')}>blog</a><span class="sep">/</span>{d.topic}</p>
 
-      <div class="lq-article-head">
-        <span class="lq-eyebrow">Field note · {d.topic}</span>
-        <h1 class="lq-article-title">{d.title}</h1>
-        <p class="lq-dek">{d.description}</p>
-        <p class="lq-byline"><b>Thanuka Perera</b> · {fmtDate(d.date, true)} · {d.readTime} read</p>
-      </div>
-
-      <div class="lq-doc">
-        <div class="lq-doc-main">
-          <div class="lq-glass" style="padding:clamp(24px,4vw,40px)">
-            <div class="lq-prose lq-prose--lead"><Content /></div>
-          </div>
-
-          <div class="lq-glass lq-subscribe">
-            <div>
-              <h4>New notes when there's something worth writing.</h4>
-              <p>No email, no tracking, no newsletter funnel — just a feed.</p>
-            </div>
-            <a class="lq-gel lq-gel--accent" href={withBase('feed.xml')}>Subscribe via RSS</a>
-          </div>
-
-          {others.length > 0 && (
-            <section style="margin-top:24px">
-              <div class="lq-sechead"><h2><span class="lq-drop"></span>Read next</h2><a href={withBase('writing')}>All →</a></div>
-              <div class="lq-glass lq-posts" style="padding:4px 14px">
-                {others.map((p) => (
-                  <a class="lq-postrow" href={withBase(`writing/${p.slug}`)}>
-                    <span class="lq-postrow-topic">{p.data.topic}</span>
-                    <h3 class="lq-postrow-h">{p.data.title}</h3>
-                    <p class="lq-postrow-desc">{p.data.description}</p>
-                    <span class="lq-postrow-meta">{fmtDate(p.data.date)}<span class="read">{p.data.readTime}</span></span>
-                  </a>
-                ))}
-              </div>
-            </section>
-          )}
+        <div class="lq-article-head">
+          <span class="lq-eyebrow">Field note · {d.topic}</span>
+          <h1 class="lq-article-title">{d.title}</h1>
+          <p class="lq-dek">{d.description}</p>
+          <p class="lq-byline"><b>Thanuka Perera</b> · {fmtDate(d.date, true)} · {d.readTime} read</p>
         </div>
 
-        {toc.length > 1 && (
-          <aside class="lq-doc-aside">
-            <div class="lq-glass lq-toc">
-              <p class="lq-toc-title">On this page</p>
-              <ol>{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
-            </div>
-          </aside>
-        )}
-      </div>
-    </article>
+        <div class="lq-prose lq-prose--lead"><Content /></div>
+      </Box>
+    </div>
 
-    <Footer />
-  </main>
+    <div class="lq-article-rail">
+      {toc.length > 1 && (
+        <Box title="on_this_page">
+          <div class="lq-toc" style="padding:0"><ol>{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol></div>
+        </Box>
+      )}
+
+      {others.length > 0 && (
+        <Box title="read_next/" bodyStyle="padding:2px 11px">
+          <div class="lq-posts">
+            {others.map((p) => (
+              <a class="lq-postrow" href={withBase(`writing/${p.slug}`)}>
+                <span class="lq-postrow-topic">{p.data.topic}</span>
+                <h3 class="lq-postrow-h">{p.data.title}</h3>
+                <span class="lq-postrow-meta">{fmtDate(p.data.date)}<span class="read">{p.data.readTime}</span></span>
+              </a>
+            ))}
+          </div>
+        </Box>
+      )}
+    </div>
+  </div>
 </BaseLayout>

@@ -1,8 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Nav from '../../components/Nav.astro';
-import Footer from '../../components/Footer.astro';
+import Box from '../../components/Box.astro';
+import Aside from '../../components/Aside.astro';
 import { withBase, fmtDate } from '../../utils/url';
 
 const posts = (await getCollection('writing', (p) => !p.data.draft)).sort(
@@ -11,30 +11,28 @@ const posts = (await getCollection('writing', (p) => !p.data.draft)).sort(
 ---
 
 <BaseLayout title="Writing — Thanuka Perera" description="Build logs, field notes, and the occasional idea measured until it fell apart.">
-  <Nav />
-  <main id="top" class="lq-content">
-    <header class="lq-intro">
-      <p class="lq-eyebrow">thanuka.lab · writing</p>
-      <h1>Field notes from the <em>deep</em> end.</h1>
-      <p class="lq-intro-bio">
-        Build logs, opinions, and the occasional idea I measured until it fell apart — written from
-        doing the thing, not reading about it. <a href={withBase('feed.xml')} style="color:var(--aqua)">Subscribe via RSS →</a>
-      </p>
-    </header>
+  <div class="lq-scene-grid">
+    <div class="lq-main">
+      <Box title="blog/" id="blog">
+        <p class="lq-box-title">field notes from the deep end</p>
+        <p class="lq-bio">build logs, opinions, and the occasional idea i measured until it fell apart — written from doing the thing, not reading about it. <a href={withBase('feed.xml')} style="color:var(--aqua)">subscribe via rss →</a></p>
+        <div class="lq-rule"></div>
+      </Box>
 
-    <section class="lq-section lq-wide">
-      <div class="lq-glass lq-posts" style="padding:4px 14px">
-        {posts.map((post) => (
-          <a class="lq-postrow" href={withBase(`writing/${post.slug}`)}>
-            <span class="lq-postrow-topic">{post.data.topic}</span>
-            <h3 class="lq-postrow-h">{post.data.title}</h3>
-            <p class="lq-postrow-desc">{post.data.description}</p>
-            <span class="lq-postrow-meta">{fmtDate(post.data.date)}<span class="read">{post.data.readTime}</span></span>
-          </a>
-        ))}
-      </div>
-    </section>
+      <Box title="all_entries.idx" bodyStyle="padding:2px 13px">
+        <div class="lq-posts">
+          {posts.map((post) => (
+            <a class="lq-postrow" href={withBase(`writing/${post.slug}`)}>
+              <span class="lq-postrow-topic">{post.data.topic}</span>
+              <h3 class="lq-postrow-h">{post.data.title}</h3>
+              <p class="lq-postrow-desc">{post.data.description}</p>
+              <span class="lq-postrow-meta">{fmtDate(post.data.date)}<span class="read">{post.data.readTime}</span></span>
+            </a>
+          ))}
+        </div>
+      </Box>
+    </div>
 
-    <Footer />
-  </main>
+    <Aside />
+  </div>
 </BaseLayout>
