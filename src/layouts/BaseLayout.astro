@@ -38,12 +38,11 @@ const banner = withBase('hero-banner.png');
       rel="stylesheet"
     />
     <script is:inline>
-      // set theme + ui-mode before paint to avoid a flash
+      // set theme before paint to avoid a flash (Steel is the only skin)
       (() => {
         try {
           const r = document.documentElement;
           r.setAttribute('data-theme', localStorage.getItem('liquid-theme') || 'dark');
-          if ((localStorage.getItem('liquid-ui') || 'glass') === 'android') r.classList.add('ui-android');
         } catch (_) {}
       })();
     </script>
@@ -60,7 +59,7 @@ const banner = withBase('hero-banner.png');
       <Nav />
 
       <div class="lq-glass lq-marquee" aria-label="site ticker">
-        <span><span class="star">★</span> welcome to thanuka.lab — you are visitor no. <b id="mq-hits">…</b> &nbsp;·&nbsp; now building <i>warmcore</i> &nbsp;·&nbsp; the water remembers your cursor &nbsp;·&nbsp; measure before you build &nbsp;·&nbsp; sign my <i>guestbook</i> &nbsp;·&nbsp; best viewed with a pulse &nbsp;·&nbsp; <b>MAKE UI GREAT AGAIN</b> &nbsp;<span class="star">★</span></span>
+        <span><span class="star">★</span> welcome to thanuka.lab — you are visitor no. <b id="mq-hits">…</b> &nbsp;·&nbsp; now building <i>warmcore</i> &nbsp;·&nbsp; the water remembers your cursor &nbsp;·&nbsp; measure before you build &nbsp;·&nbsp; the negative results count &nbsp;·&nbsp; best viewed with a pulse &nbsp;·&nbsp; <b>MAKE UI GREAT AGAIN</b> &nbsp;<span class="star">★</span></span>
       </div>
 
       <slot />
@@ -98,38 +97,48 @@ const banner = withBase('hero-banner.png');
       themeBtn?.addEventListener('click', () => applyTheme(theme === 'dark' ? 'light' : 'dark'));
       applyTheme(theme);
 
-      // ---- UI mode: Steel (glass) / Material (Android) ----
-      const uiSeg = document.getElementById('uiSeg');
-      let uiMode = (() => { try { return localStorage.getItem('liquid-ui') || 'glass'; } catch (_) { return 'glass'; } })();
-      function applyUI(m) {
-        uiMode = m; root.classList.toggle('ui-android', m === 'android');
-        uiSeg?.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.ui === m ? 'true' : 'false'));
-        try { localStorage.setItem('liquid-ui', m); } catch (_) {}
-      }
-      uiSeg?.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) applyUI(b.dataset.ui); });
-      applyUI(uiMode);
+      // ---- Steel is the only skin: never engage the Material/Android texture ----
+      root.classList.remove('ui-android');
+      try { localStorage.removeItem('liquid-ui'); } catch (_) {}
 
-      // ---- RippleFX: a tap drops into the fluid (+ Material ink ripple) ----
-      const RIPPLE_TARGETS = '.lq-gel, .lq-iconbtn, .lq-fab, .lq-pill, .lq-card, .lq-postrow, .lq-88, .lq-navbar a';
+      // ---- RippleFX: a tap drops into the fluid ----
       window.addEventListener('pointerdown', (e) => {
         if (e.pointerType === 'mouse' && e.button !== 0) return;
+        if (e.target.closest('.lq-box-bar .x')) return; // close button handles its own feedback
         const r = document.createElement('div');
         r.className = 'lq-ripple'; r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px';
         document.body.appendChild(r); setTimeout(() => r.remove(), 660);
         if (fluid.ok) fluid.splatAt(e.clientX, e.clientY);
-        if (root.classList.contains('ui-android')) {
-          const el = e.target.closest(RIPPLE_TARGETS);
-          if (el) {
-            el.classList.add('md-ripple-host');
-            const rect = el.getBoundingClientRect(), d = Math.max(rect.width, rect.height);
-            const s = document.createElement('span'); s.className = 'md-ripple';
-            s.style.width = s.style.height = d + 'px';
-            s.style.left = (e.clientX - rect.left - d / 2) + 'px';
-            s.style.top = (e.clientY - rect.top - d / 2) + 'px';
-            el.appendChild(s); setTimeout(() => s.remove(), 560);
-          }
-        }
       }, { passive: true });
+
+      // ---- window chrome: the × closes its box (early-web window, restored on reload) ----
+      document.querySelectorAll('.lq-box-bar .x').forEach((x) => {
+        x.setAttribute('role', 'button');
+        x.setAttribute('aria-label', 'close window');
+        x.addEventListener('click', (e) => {
+          e.preventDefault(); e.stopPropagation();
+          const box = x.closest('.lq-box');
+          if (!box) return;
+          box.style.transition = 'opacity .18s ease, transform .18s ease';
+          box.style.opacity = '0'; box.style.transform = 'scale(.985)';
+          setTimeout(() => { box.classList.add('is-closed'); box.style.cssText = ''; }, 180);
+        });
+      });
+
+      // ---- TOC scroll-spy: highlight the section currently in view ----
+      const tocLinks = [...document.querySelectorAll('.lq-toc a[href^="#"]')];
+      if (tocLinks.length) {
+        const byId = new Map(tocLinks.map((a) => [decodeURIComponent(a.getAttribute('href').slice(1)), a]));
+        const heads = [...document.querySelectorAll('.lq-prose h2[id]')].filter((h) => byId.has(h.id));
+        const spy = new IntersectionObserver((entries) => {
+          entries.forEach((en) => {
+            if (!en.isIntersecting) return;
+            tocLinks.forEach((a) => a.classList.remove('is-active'));
+            byId.get(en.target.id)?.classList.add('is-active');
+          });
+        }, { rootMargin: '-12% 0px -78% 0px' });
+        heads.forEach((h) => spy.observe(h));
+      }
 
       // ---- FAB: back to top + a little splash ----
       document.getElementById('fab')?.addEventListener('click', () => {

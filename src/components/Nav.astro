@@ -14,10 +14,6 @@ const isActive = (p: string) => {
   <a href={withBase('projects')} aria-current={isActive('projects') ? 'page' : undefined}>projects</a>
   <a href={withBase('feed.xml')}>rss</a>
   <span class="lq-navtools">
-    <div class="lq-seg" id="uiSeg" role="group" aria-label="Interface style">
-      <button data-ui="glass" type="button" aria-pressed="true">Steel</button>
-      <button data-ui="android" type="button" aria-pressed="false">Material</button>
-    </div>
     <button id="themeToggle" class="lq-iconbtn" type="button" aria-label="Toggle dark / light"></button>
   </span>
 </nav>

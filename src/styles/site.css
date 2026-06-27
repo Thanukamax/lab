@@ -22,6 +22,11 @@ body { min-height: 100dvh; background: #04161a; overflow-x: hidden; }
 .lq-exhibit > img { width: 100%; display: block; border-radius: 8px; border: 1px solid var(--glass-bd); box-shadow: var(--surface-sh); background: var(--glass-bg-2); }
 .lq-exhibit .fig { color: var(--lotus); text-transform: uppercase; letter-spacing: 0.08em; }
 
+/* the window × is a real control — closes its box for the session */
+.lq-box-bar .x { cursor: pointer; transition: opacity 0.15s, transform 0.15s; }
+.lq-box-bar .x:hover { opacity: 1; transform: scale(1.18); }
+.lq-box.is-closed { display: none; }
+
 /* breadcrumb above an article title */
 .lq-crumb { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); margin: 0 0 12px; }
 .lq-crumb a { color: var(--muted); text-decoration: none; }
